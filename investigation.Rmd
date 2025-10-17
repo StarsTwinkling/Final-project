@@ -17,7 +17,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r load-lib, message = FALSE}
 library(tidyverse)
 # Add any other libraries here
-
+library(readxl)
 
 
 ```
@@ -25,8 +25,8 @@ library(tidyverse)
 
 ```{r load-data}
 # load your data 
-
-
+p<-read_excel("data/PunishmentsQ12023.csv")
+view(p)
 
 
 ```
