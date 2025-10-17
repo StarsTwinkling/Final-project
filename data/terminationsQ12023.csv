@@ -1,0 +1,218 @@
+REGION,ORDER TYPE,REASON,SEX,DATE,COUNT
+East Midlands,Community order,Ran their full course,Female,2023Q1,124
+East Midlands,Community order,Ran their full course,Male,2023Q1,624
+East Midlands,Community order,Terminated early for good progress,Female,2023Q1,7
+East Midlands,Community order,Terminated early for good progress,Male,2023Q1,20
+East Midlands,Community order,Terminated early for failure to comply with requirements,Female,2023Q1,10
+East Midlands,Community order,Terminated early for failure to comply with requirements,Male,2023Q1,97
+East Midlands,Community order,Terminated early for conviction of an offence,Female,2023Q1,14
+East Midlands,Community order,Terminated early for conviction of an offence,Male,2023Q1,93
+East Midlands,Community order,Terminated early for other reasons,Female,2023Q1,8
+East Midlands,Community order,Terminated early for other reasons,Male,2023Q1,58
+East Midlands,Suspended sentence order,Ran their full course,Female,2023Q1,70
+East Midlands,Suspended sentence order,Ran their full course,Male,2023Q1,379
+East Midlands,Suspended sentence order,Terminated early for failure to comply with requirements,Female,2023Q1,5
+East Midlands,Suspended sentence order,Terminated early for failure to comply with requirements,Male,2023Q1,35
+East Midlands,Suspended sentence order,Terminated early for conviction of an offence,Female,2023Q1,11
+East Midlands,Suspended sentence order,Terminated early for conviction of an offence,Male,2023Q1,59
+East Midlands,Suspended sentence order,Terminated early for other reasons,Female,2023Q1,c
+East Midlands,Suspended sentence order,Terminated early for other reasons,Male,2023Q1,3
+East of England,Community order,Ran their full course,Female,2023Q1,191
+East of England,Community order,Ran their full course,Male,2023Q1,736
+East of England,Community order,Terminated early for good progress,Female,2023Q1,20
+East of England,Community order,Terminated early for good progress,Male,2023Q1,212
+East of England,Community order,Terminated early for failure to comply with requirements,Female,2023Q1,18
+East of England,Community order,Terminated early for failure to comply with requirements,Male,2023Q1,108
+East of England,Community order,Terminated early for conviction of an offence,Female,2023Q1,23
+East of England,Community order,Terminated early for conviction of an offence,Male,2023Q1,144
+East of England,Community order,Terminated early for other reasons,Female,2023Q1,13
+East of England,Community order,Terminated early for other reasons,Male,2023Q1,48
+East of England,Suspended sentence order,Ran their full course,Female,2023Q1,77
+East of England,Suspended sentence order,Ran their full course,Male,2023Q1,544
+East of England,Suspended sentence order,Terminated early for failure to comply with requirements,Female,2023Q1,8
+East of England,Suspended sentence order,Terminated early for failure to comply with requirements,Male,2023Q1,46
+East of England,Suspended sentence order,Terminated early for conviction of an offence,Female,2023Q1,6
+East of England,Suspended sentence order,Terminated early for conviction of an offence,Male,2023Q1,81
+East of England,Suspended sentence order,Terminated early for other reasons,Female,2023Q1,c
+East of England,Suspended sentence order,Terminated early for other reasons,Male,2023Q1,11
+Greater Manchester,Community order,Ran their full course,Female,2023Q1,109
+Greater Manchester,Community order,Ran their full course,Male,2023Q1,540
+Greater Manchester,Community order,Terminated early for good progress,Female,2023Q1,c
+Greater Manchester,Community order,Terminated early for good progress,Male,2023Q1,4
+Greater Manchester,Community order,Terminated early for failure to comply with requirements,Female,2023Q1,10
+Greater Manchester,Community order,Terminated early for failure to comply with requirements,Male,2023Q1,76
+Greater Manchester,Community order,Terminated early for conviction of an offence,Female,2023Q1,6
+Greater Manchester,Community order,Terminated early for conviction of an offence,Male,2023Q1,100
+Greater Manchester,Community order,Terminated early for other reasons,Female,2023Q1,6
+Greater Manchester,Community order,Terminated early for other reasons,Male,2023Q1,19
+Greater Manchester,Suspended sentence order,Ran their full course,Female,2023Q1,47
+Greater Manchester,Suspended sentence order,Ran their full course,Male,2023Q1,337
+Greater Manchester,Suspended sentence order,Terminated early for failure to comply with requirements,Female,2023Q1,c
+Greater Manchester,Suspended sentence order,Terminated early for failure to comply with requirements,Male,2023Q1,57
+Greater Manchester,Suspended sentence order,Terminated early for conviction of an offence,Female,2023Q1,6
+Greater Manchester,Suspended sentence order,Terminated early for conviction of an offence,Male,2023Q1,60
+Greater Manchester,Suspended sentence order,Terminated early for other reasons,Male,2023Q1,3
+"Kent, Surrey and Sussex",Community order,Ran their full course,Female,2023Q1,135
+"Kent, Surrey and Sussex",Community order,Ran their full course,Male,2023Q1,516
+"Kent, Surrey and Sussex",Community order,Terminated early for good progress,Female,2023Q1,9
+"Kent, Surrey and Sussex",Community order,Terminated early for good progress,Male,2023Q1,80
+"Kent, Surrey and Sussex",Community order,Terminated early for failure to comply with requirements,Female,2023Q1,11
+"Kent, Surrey and Sussex",Community order,Terminated early for failure to comply with requirements,Male,2023Q1,48
+"Kent, Surrey and Sussex",Community order,Terminated early for conviction of an offence,Female,2023Q1,19
+"Kent, Surrey and Sussex",Community order,Terminated early for conviction of an offence,Male,2023Q1,87
+"Kent, Surrey and Sussex",Community order,Terminated early for other reasons,Female,2023Q1,8
+"Kent, Surrey and Sussex",Community order,Terminated early for other reasons,Male,2023Q1,40
+"Kent, Surrey and Sussex",Suspended sentence order,Ran their full course,Female,2023Q1,47
+"Kent, Surrey and Sussex",Suspended sentence order,Ran their full course,Male,2023Q1,328
+"Kent, Surrey and Sussex",Suspended sentence order,Terminated early for failure to comply with requirements,Female,2023Q1,6
+"Kent, Surrey and Sussex",Suspended sentence order,Terminated early for failure to comply with requirements,Male,2023Q1,30
+"Kent, Surrey and Sussex",Suspended sentence order,Terminated early for conviction of an offence,Female,2023Q1,7
+"Kent, Surrey and Sussex",Suspended sentence order,Terminated early for conviction of an offence,Male,2023Q1,46
+"Kent, Surrey and Sussex",Suspended sentence order,Terminated early for other reasons,Female,2023Q1,c
+"Kent, Surrey and Sussex",Suspended sentence order,Terminated early for other reasons,Male,2023Q1,4
+London,Community order,Ran their full course,Female,2023Q1,189
+London,Community order,Ran their full course,Male,2023Q1,1185
+London,Community order,Terminated early for good progress,Female,2023Q1,12
+London,Community order,Terminated early for good progress,Male,2023Q1,104
+London,Community order,Terminated early for failure to comply with requirements,Female,2023Q1,30
+London,Community order,Terminated early for failure to comply with requirements,Male,2023Q1,134
+London,Community order,Terminated early for conviction of an offence,Female,2023Q1,13
+London,Community order,Terminated early for conviction of an offence,Male,2023Q1,158
+London,Community order,Terminated early for other reasons,Female,2023Q1,14
+London,Community order,Terminated early for other reasons,Male,2023Q1,116
+London,Suspended sentence order,Ran their full course,Female,2023Q1,108
+London,Suspended sentence order,Ran their full course,Male,2023Q1,791
+London,Suspended sentence order,Terminated early for failure to comply with requirements,Female,2023Q1,c
+London,Suspended sentence order,Terminated early for failure to comply with requirements,Male,2023Q1,72
+London,Suspended sentence order,Terminated early for conviction of an offence,Female,2023Q1,7
+London,Suspended sentence order,Terminated early for conviction of an offence,Male,2023Q1,100
+London,Suspended sentence order,Terminated early for other reasons,Male,2023Q1,5
+National Security Division,Community order,Ran their full course,Male,2023Q1,c
+National Security Division,Community order,Terminated early for failure to comply with requirements,Male,2023Q1,c
+North East,Community order,Ran their full course,Female,2023Q1,90
+North East,Community order,Ran their full course,Male,2023Q1,418
+North East,Community order,Terminated early for good progress,Female,2023Q1,11
+North East,Community order,Terminated early for good progress,Male,2023Q1,76
+North East,Community order,Terminated early for failure to comply with requirements,Female,2023Q1,17
+North East,Community order,Terminated early for failure to comply with requirements,Male,2023Q1,96
+North East,Community order,Terminated early for conviction of an offence,Female,2023Q1,21
+North East,Community order,Terminated early for conviction of an offence,Male,2023Q1,105
+North East,Community order,Terminated early for other reasons,Female,2023Q1,6
+North East,Community order,Terminated early for other reasons,Male,2023Q1,40
+North East,Suspended sentence order,Ran their full course,Female,2023Q1,44
+North East,Suspended sentence order,Ran their full course,Male,2023Q1,288
+North East,Suspended sentence order,Terminated early for failure to comply with requirements,Female,2023Q1,4
+North East,Suspended sentence order,Terminated early for failure to comply with requirements,Male,2023Q1,33
+North East,Suspended sentence order,Terminated early for conviction of an offence,Female,2023Q1,4
+North East,Suspended sentence order,Terminated early for conviction of an offence,Male,2023Q1,60
+North East,Suspended sentence order,Terminated early for other reasons,Female,2023Q1,c
+North East,Suspended sentence order,Terminated early for other reasons,Male,2023Q1,9
+North West,Community order,Ran their full course,Female,2023Q1,190
+North West,Community order,Ran their full course,Male,2023Q1,779
+North West,Community order,Terminated early for good progress,Female,2023Q1,11
+North West,Community order,Terminated early for good progress,Male,2023Q1,58
+North West,Community order,Terminated early for failure to comply with requirements,Female,2023Q1,24
+North West,Community order,Terminated early for failure to comply with requirements,Male,2023Q1,118
+North West,Community order,Terminated early for conviction of an offence,Female,2023Q1,31
+North West,Community order,Terminated early for conviction of an offence,Male,2023Q1,206
+North West,Community order,Terminated early for other reasons,Female,2023Q1,17
+North West,Community order,Terminated early for other reasons,Male,2023Q1,94
+North West,Suspended sentence order,Ran their full course,Female,2023Q1,102
+North West,Suspended sentence order,Ran their full course,Male,2023Q1,571
+North West,Suspended sentence order,Terminated early for failure to comply with requirements,Female,2023Q1,11
+North West,Suspended sentence order,Terminated early for failure to comply with requirements,Male,2023Q1,59
+North West,Suspended sentence order,Terminated early for conviction of an offence,Female,2023Q1,11
+North West,Suspended sentence order,Terminated early for conviction of an offence,Male,2023Q1,82
+North West,Suspended sentence order,Terminated early for other reasons,Male,2023Q1,9
+Other,Community order,Ran their full course,Male,2023Q1,c
+Other,Community order,Terminated early for failure to comply with requirements,Male,2023Q1,c
+Other,Community order,Terminated early for other reasons,Male,2023Q1,c
+Other,Suspended sentence order,Ran their full course,Male,2023Q1,c
+South Central,Community order,Ran their full course,Female,2023Q1,107
+South Central,Community order,Ran their full course,Male,2023Q1,486
+South Central,Community order,Terminated early for good progress,Female,2023Q1,12
+South Central,Community order,Terminated early for good progress,Male,2023Q1,105
+South Central,Community order,Terminated early for failure to comply with requirements,Female,2023Q1,15
+South Central,Community order,Terminated early for failure to comply with requirements,Male,2023Q1,92
+South Central,Community order,Terminated early for conviction of an offence,Female,2023Q1,15
+South Central,Community order,Terminated early for conviction of an offence,Male,2023Q1,88
+South Central,Community order,Terminated early for other reasons,Female,2023Q1,3
+South Central,Community order,Terminated early for other reasons,Male,2023Q1,47
+South Central,Suspended sentence order,Ran their full course,Female,2023Q1,34
+South Central,Suspended sentence order,Ran their full course,Male,2023Q1,327
+South Central,Suspended sentence order,Terminated early for failure to comply with requirements,Female,2023Q1,3
+South Central,Suspended sentence order,Terminated early for failure to comply with requirements,Male,2023Q1,29
+South Central,Suspended sentence order,Terminated early for conviction of an offence,Female,2023Q1,7
+South Central,Suspended sentence order,Terminated early for conviction of an offence,Male,2023Q1,50
+South Central,Suspended sentence order,Terminated early for other reasons,Male,2023Q1,7
+South West,Community order,Ran their full course,Female,2023Q1,148
+South West,Community order,Ran their full course,Male,2023Q1,661
+South West,Community order,Terminated early for good progress,Female,2023Q1,13
+South West,Community order,Terminated early for good progress,Male,2023Q1,84
+South West,Community order,Terminated early for failure to comply with requirements,Female,2023Q1,18
+South West,Community order,Terminated early for failure to comply with requirements,Male,2023Q1,98
+South West,Community order,Terminated early for conviction of an offence,Female,2023Q1,24
+South West,Community order,Terminated early for conviction of an offence,Male,2023Q1,107
+South West,Community order,Terminated early for other reasons,Female,2023Q1,18
+South West,Community order,Terminated early for other reasons,Male,2023Q1,141
+South West,Suspended sentence order,Ran their full course,Female,2023Q1,52
+South West,Suspended sentence order,Ran their full course,Male,2023Q1,350
+South West,Suspended sentence order,Terminated early for failure to comply with requirements,Female,2023Q1,7
+South West,Suspended sentence order,Terminated early for failure to comply with requirements,Male,2023Q1,26
+South West,Suspended sentence order,Terminated early for conviction of an offence,Female,2023Q1,5
+South West,Suspended sentence order,Terminated early for conviction of an offence,Male,2023Q1,71
+South West,Suspended sentence order,Terminated early for other reasons,Female,2023Q1,c
+South West,Suspended sentence order,Terminated early for other reasons,Male,2023Q1,9
+Wales,Community order,Ran their full course,Female,2023Q1,118
+Wales,Community order,Ran their full course,Male,2023Q1,530
+Wales,Community order,Terminated early for good progress,Female,2023Q1,3
+Wales,Community order,Terminated early for good progress,Male,2023Q1,54
+Wales,Community order,Terminated early for failure to comply with requirements,Female,2023Q1,14
+Wales,Community order,Terminated early for failure to comply with requirements,Male,2023Q1,55
+Wales,Community order,Terminated early for conviction of an offence,Female,2023Q1,27
+Wales,Community order,Terminated early for conviction of an offence,Male,2023Q1,140
+Wales,Community order,Terminated early for other reasons,Female,2023Q1,5
+Wales,Community order,Terminated early for other reasons,Male,2023Q1,42
+Wales,Suspended sentence order,Ran their full course,Female,2023Q1,89
+Wales,Suspended sentence order,Ran their full course,Male,2023Q1,319
+Wales,Suspended sentence order,Terminated early for failure to comply with requirements,Female,2023Q1,c
+Wales,Suspended sentence order,Terminated early for failure to comply with requirements,Male,2023Q1,37
+Wales,Suspended sentence order,Terminated early for conviction of an offence,Female,2023Q1,7
+Wales,Suspended sentence order,Terminated early for conviction of an offence,Male,2023Q1,74
+Wales,Suspended sentence order,Terminated early for other reasons,Female,2023Q1,3
+Wales,Suspended sentence order,Terminated early for other reasons,Male,2023Q1,6
+West Midlands,Community order,Ran their full course,Female,2023Q1,171
+West Midlands,Community order,Ran their full course,Male,2023Q1,779
+West Midlands,Community order,Terminated early for good progress,Female,2023Q1,11
+West Midlands,Community order,Terminated early for good progress,Male,2023Q1,75
+West Midlands,Community order,Terminated early for failure to comply with requirements,Female,2023Q1,14
+West Midlands,Community order,Terminated early for failure to comply with requirements,Male,2023Q1,102
+West Midlands,Community order,Terminated early for conviction of an offence,Female,2023Q1,23
+West Midlands,Community order,Terminated early for conviction of an offence,Male,2023Q1,108
+West Midlands,Community order,Terminated early for other reasons,Female,2023Q1,3
+West Midlands,Community order,Terminated early for other reasons,Male,2023Q1,57
+West Midlands,Suspended sentence order,Ran their full course,Female,2023Q1,81
+West Midlands,Suspended sentence order,Ran their full course,Male,2023Q1,501
+West Midlands,Suspended sentence order,Terminated early for failure to comply with requirements,Female,2023Q1,c
+West Midlands,Suspended sentence order,Terminated early for failure to comply with requirements,Male,2023Q1,45
+West Midlands,Suspended sentence order,Terminated early for conviction of an offence,Female,2023Q1,3
+West Midlands,Suspended sentence order,Terminated early for conviction of an offence,Male,2023Q1,72
+West Midlands,Suspended sentence order,Terminated early for other reasons,Male,2023Q1,8
+Yorkshire and the Humber,Community order,Ran their full course,Female,2023Q1,226
+Yorkshire and the Humber,Community order,Ran their full course,Male,2023Q1,1107
+Yorkshire and the Humber,Community order,Terminated early for good progress,Female,2023Q1,36
+Yorkshire and the Humber,Community order,Terminated early for good progress,Male,2023Q1,130
+Yorkshire and the Humber,Community order,Terminated early for failure to comply with requirements,Female,2023Q1,25
+Yorkshire and the Humber,Community order,Terminated early for failure to comply with requirements,Male,2023Q1,172
+Yorkshire and the Humber,Community order,Terminated early for conviction of an offence,Female,2023Q1,68
+Yorkshire and the Humber,Community order,Terminated early for conviction of an offence,Male,2023Q1,279
+Yorkshire and the Humber,Community order,Terminated early for other reasons,Female,2023Q1,8
+Yorkshire and the Humber,Community order,Terminated early for other reasons,Male,2023Q1,84
+Yorkshire and the Humber,Suspended sentence order,Ran their full course,Female,2023Q1,97
+Yorkshire and the Humber,Suspended sentence order,Ran their full course,Male,2023Q1,608
+Yorkshire and the Humber,Suspended sentence order,Terminated early for failure to comply with requirements,Female,2023Q1,7
+Yorkshire and the Humber,Suspended sentence order,Terminated early for failure to comply with requirements,Male,2023Q1,57
+Yorkshire and the Humber,Suspended sentence order,Terminated early for conviction of an offence,Female,2023Q1,15
+Yorkshire and the Humber,Suspended sentence order,Terminated early for conviction of an offence,Male,2023Q1,88
+Yorkshire and the Humber,Suspended sentence order,Terminated early for other reasons,Female,2023Q1,c
+Yorkshire and the Humber,Suspended sentence order,Terminated early for other reasons,Male,2023Q1,6
