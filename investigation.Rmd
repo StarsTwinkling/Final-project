@@ -18,8 +18,6 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 # Add any other libraries here
 library(readxl)
-options(repos = c(CRAN = "https://cloud.r-project.org"))
-install.packages("janitor")
 library(janitor)
 
 
@@ -28,67 +26,39 @@ library(janitor)
 
 ```{r load-data}
 # load your data 
-Punishments_Q12023<-read_excel("data/PunishmentsQ12023.csv")%>%
-  clean_names()
-#view(Punishments_Q12023)
-
-Cleaned <- Punishments_Q12023%>%
-    mutate(ethnicity=
-    recode(ethnicity,
-           "a Asian or Asian British" = "Asian", 
-           "b Black/ African/ Caribbean/ Black British" = "Black",
-           "c Mixed/ Multiple ethnic groups" = "Mixed",
-           "d Other ethnic group" = "Other",
-           "e White" = "White",
-           "f Not known" = "NA"
-           ))%>%
-            rename(Amount = "count")
+ 
+BirdLife <- read_csv("/Users/reyr/R/Final_project/Birds/ELEData/TraitData/AVONET1_BirdLife.csv")
 
 
-
-Pun <- Punishments_Q12023%>%
-  rename(Amount = "count")
-
-ggplot(data = Punishments_Q12023, mapping = aes(y = punishment, fill= ethnicity)) +
-  geom_bar(position = "fill") +
-  theme_minimal()
-
-Cleaned%>%
-  group_by(ethnicity)%>%
-  summarise(total = sum(Amount))%>%
-  mutate(percent = total/sum(total)*100)
+Birdlife_Long <- BirdLife %>%
+  pivot_longer(
+    cols = c(Female, Male),
+    names_to = "gender",
+    values_to = "individuals"
+  )
 
 
-ggplot(data = Punishments_Q12023, mapping = aes(y = punishment, fill= religion)) +
-  geom_bar(position = "fill") +
-  theme_minimal()
-
-Cleaned%>%
-  group_by(religion)%>%
-  summarise(total = sum(Amount))%>%
-  mutate(percent = total/sum(total)*100)
-
-ggplot(data = Punishments_Q12023, mapping = aes(y = predominant_function_of_establishment, fill= religion)) +
-  geom_bar(position = "fill") +
-  theme_minimal()
-
-Cleaned%>%
-  group_by(religion)%>%
-  summarise(total = sum(Amount))%>%
-  mutate(percent = total/sum(total)*100)
-
-ggplot(Cleaned, mapping = aes(x = no_of_days, y = Amount, colour = ethnicity)) +
+Birdlife_Long %>%
+  ggplot(aes(x = (Wing.Length), 
+                 y = (Mass), 
+                 colour = Habitat, 
+                 size = individuals, 
+                 alpha = 0.3,
+                  )) +
   geom_point() +
-  theme_bw()
+  geom_smooth(method = "lm") +
+  guides(size = FALSE, alpha = FALSE) +
+  facet_wrap(. ~ Habitat, scales = "free") +
+  coord_cartesian(
+    xlim = c(0, 400),
+    ylim = c(0, 3000)
+  )
+
+  
+
+  
 
 
-#ggplot(data = Cleaned, mapping = aes(y = sum(Amount), fill= Ethnicity)) +
-  #geom_bar(position = "fill") +
-  #theme_minimal()
-
-#ggplot(Pun, aes(y = Sum, x = No_days, colour = Ethnicity)) +
-  #geom_point() +
-  #theme_minimal()
 
 
 

@@ -3,20 +3,22 @@ title: "Project title"
 author: "by Tidybear123: Ishildur, Laith, Jason, & Richard"
 date: "`r Sys.Date()`"
 output: html_document
+editor_options: 
+  markdown: 
+    wrap: sentence
 ---
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-
 ```{r load-lib, include = FALSE}
 library(tidyverse)
 library(readxl)
-
+install.packages("janitor")
+library(janitor)
 
 ```
-
 
 ```{r load-data, include=FALSE}
 # load your data here and any pre-processing/cleaning 
@@ -37,60 +39,93 @@ Cleaned <- Punishments_Q12023%>%
            ))
   
 
-Cleaned%>%
-  ggplot(mapping = aes(x = Ethnicity)) +
-  geom_bar()
+data <- Cleaned %>%
+  clean_names() %>%
+  mutate(
+    no_of_days = case_when(no_of_days == "." ~ 0,
+                           TRUE ~ as.numeric(no_of_days)
+  )) %>%
+  group_by(ethnicity) %>%
+  summarise(mean = mean(no_of_days))
 
 
+ ggplot(data = data, aes(x = ethnicity, y = mean)) +
+  geom_col() 
+
+ data1 <- Cleaned %>%
+  clean_names() %>%
+  mutate(
+    no_of_days = case_when(no_of_days == "." ~ 0,
+                           TRUE ~ as.numeric(no_of_days)
+  ))
+  group_by(age_group) %>%
+  summarise(mean = mean(no_of_days))
+ 
+ print(data1 %>%
+  ggplot(aes(x = age_group, y = mean)) +
+  geom_col() )
+
+library(tidyverse)
+df <- tibble(
+         xvals = seq(from = -2, to = 2, by = 0.1), 
+         yvals = xvals^2 
+      )
+ggplot(df, aes(x = xvals, y = yvals)) + 
+  geom_histogram()
+
+
+# Related library we need
+library(tidyverse)
+# Loading your data set
+bat_data <- read_csv("data/bats.csv")
+ 
+# Incomplete code snippet for the created data visualization
+bat_data %>%
+  ggplot(aes(x = ________, y = body_mass)) +
+  ________(alpha = 0.3) +
+  geom_smooth(method = ________, se = FALSE) +
+  labs(
+    title = "Relationship between body size traits in bats"
+  )
 
 
 ```
 
-
 ## Research Question
 
-Describe your research question here. Include why this question might be of interest. 
-
-
-
-
+Describe your research question here.
+Include why this question might be of interest.
 
 ## Data
 
-Briefly describe your dataset here - include a description of the key variables you will be investigating. 
-Include a citation for your data. 
-See http://libraryguides.vu.edu.au/c.php?g=386501&p=4347840 for guidance on proper citation for datasets. 
+Briefly describe your dataset here - include a description of the key variables you will be investigating.
+Include a citation for your data.
+See <http://libraryguides.vu.edu.au/c.php?g=386501&p=4347840> for guidance on proper citation for datasets.
 If you got your data off the web, make sure to state the retrieval date.
-
-
-
-
-
 
 ## Findings
 
-The write-up of your project and findings go here. 
+The write-up of your project and findings go here.
 
-Think of this as the text of your presentation with some extra detail to cover what there was not time to discuss in the presentation. This might include any assumptions you made when doing your analysis, any limitations of the work you have done or any ideas you have for future work. Feel free to split this section into subsections to make it easier to read. 
+Think of this as the text of your presentation with some extra detail to cover what there was not time to discuss in the presentation.
+This might include any assumptions you made when doing your analysis, any limitations of the work you have done or any ideas you have for future work.
+Feel free to split this section into subsections to make it easier to read.
 
-The length should be roughly 1,500 words. 
+The length should be roughly 1,500 words.
 If you want to use a word count addin, you can install this by copying and pasting the following into RStudio:
 
 `devtools::install_github("benmarwick/wordcountaddin", type = "source", dependencies = TRUE)`
 
-You will then need to restart RStudio. Once you have done that, select the text you want to count the words of, go to Addins, and select the `Word count` addin.
-This addin counts words using two different algorithms, but the results should be similar and as long as you're in the ballpark of 1,500 words, you're good! 
-The addin will ignore code chunks and only count the words in prose. If you don't want to use the addin you can always copy and paste the text into Microsoft Word to do a Word Count!
+You will then need to restart RStudio.
+Once you have done that, select the text you want to count the words of, go to Addins, and select the `Word count` addin.
+This addin counts words using two different algorithms, but the results should be similar and as long as you're in the ballpark of 1,500 words, you're good!
+The addin will ignore code chunks and only count the words in prose.
+If you don't want to use the addin you can always copy and paste the text into Microsoft Word to do a Word Count!
 
 You can also load your data here and present any analysis results / plots.
-Make sure to hide your code with  `echo = FALSE` unless the point you are trying to make is about the code itself, in which case you should show your code.
-
-
-
-
+Make sure to hide your code with `echo = FALSE` unless the point you are trying to make is about the code itself, in which case you should show your code.
 
 ## References
 
-List any references here. You should, at a minimum, list your data source.
-
-
+List any references here.
+You should, at a minimum, list your data source.
