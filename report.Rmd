@@ -15,7 +15,6 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r load-lib, include = FALSE}
 library(tidyverse)
 library(readxl)
-install.packages("janitor")
 library(janitor)
 
 ```
@@ -23,70 +22,6 @@ library(janitor)
 ```{r load-data, include=FALSE}
 # load your data here and any pre-processing/cleaning 
 #  that you need for your report.
-
-Punishments_Q12023<-read_excel("data/PunishmentsQ12023.csv")
-
-
-Cleaned <- Punishments_Q12023%>%
-    mutate(Ethnicity=
-    recode(Ethnicity,
-           "a Asian or Asian British" = "Asian", 
-           "b Black/ African/ Caribbean/ Black British" = "Black",
-           "c Mixed/ Multiple ethnic groups" = "Mixed",
-           "d Other ethnic group" = "Other",
-           "e White" = "White",
-           "f Not known" = "NA"
-           ))
-  
-
-data <- Cleaned %>%
-  clean_names() %>%
-  mutate(
-    no_of_days = case_when(no_of_days == "." ~ 0,
-                           TRUE ~ as.numeric(no_of_days)
-  )) %>%
-  group_by(ethnicity) %>%
-  summarise(mean = mean(no_of_days))
-
-
- ggplot(data = data, aes(x = ethnicity, y = mean)) +
-  geom_col() 
-
- data1 <- Cleaned %>%
-  clean_names() %>%
-  mutate(
-    no_of_days = case_when(no_of_days == "." ~ 0,
-                           TRUE ~ as.numeric(no_of_days)
-  ))
-  group_by(age_group) %>%
-  summarise(mean = mean(no_of_days))
- 
- print(data1 %>%
-  ggplot(aes(x = age_group, y = mean)) +
-  geom_col() )
-
-library(tidyverse)
-df <- tibble(
-         xvals = seq(from = -2, to = 2, by = 0.1), 
-         yvals = xvals^2 
-      )
-ggplot(df, aes(x = xvals, y = yvals)) + 
-  geom_histogram()
-
-
-# Related library we need
-library(tidyverse)
-# Loading your data set
-bat_data <- read_csv("data/bats.csv")
- 
-# Incomplete code snippet for the created data visualization
-bat_data %>%
-  ggplot(aes(x = ________, y = body_mass)) +
-  ________(alpha = 0.3) +
-  geom_smooth(method = ________, se = FALSE) +
-  labs(
-    title = "Relationship between body size traits in bats"
-  )
 
 
 ```

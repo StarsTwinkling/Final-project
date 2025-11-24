@@ -1,7 +1,7 @@
 ---
-title: "Presentation title"
-subtitle: "Presentation subtitle (if any)"
-author: "Team name <br> Names of team members"
+title: "The Body Mass and Wing Length Distrubution in Passeriformes "
+subtitle: "and The Replication Crisis"
+author: "Tidybear123 <br> Ishildur, Jason, Laith and Richard"
 institute: "University of Edinburgh"
 date: "`r Sys.Date()`"
 output:
@@ -13,6 +13,7 @@ output:
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
+    
       
 ---
 
@@ -39,7 +40,7 @@ knitr::opts_chunk$set(fig.retina = 3, dpi = 300, fig.width = 6, fig.asp = 0.618,
 ```
 
 ```{r load-data, include=FALSE}
-# Load your data here
+BirdLife <- read.csv("data/AVONET1_BirdLife.csv")
 
 ```
 
@@ -47,65 +48,169 @@ knitr::opts_chunk$set(fig.retina = 3, dpi = 300, fig.width = 6, fig.asp = 0.618,
 
 #Background image
 style_xaringan(
-  title_slide_background_image = "img/confetti.jpg"
+  title_slide_background_image = "img/British_birds.jpg"
 )
+
 ```
 
 class: center, middle
 
-## A statement of the overall goal / research question
+## How does body mass relate to winglength in birds, and how does it differ by habitats?
+
 
 ---
 
-class: inverse, center, middle
+class: center, middle
 
-# Section title
+# Background and Data
 
----
-
-# Hello World
-
-- Click the `Knit` button to compile your presentation
-
-- Make sure to commit and push all resulting files to your GitHub repo
+- Data set from the AVONET data base
+- Comparing with already existing data
+```{r Passeriformes1, echo = FALSE, out.width = "70%", fig.align = "center", fig.cap = "Source: @Richad?"}
+include_graphics("img/Research.png")
+```
 
 ---
 
-class: inverse, middle, center
+# Cleaning and techniques
 
-# Using xaringan
+```{r cleaning}
+# Cleaning
+(BirdLife <- BirdLife %>%
+  filter(Order1 == "Passeriformes", !is.na(Habitat.Density))%>%
+  mutate(
+    Habitat.Density = case_when(
+      Habitat.Density == 1 ~ "Dense",
+      Habitat.Density == 2 ~ "Open",
+      Habitat.Density == 3 ~ "Open"
+    ),
+    Habitat.Density = fct_relevel(Habitat.Density, "Dense", "Open")
+  ))
+```
+
 
 ---
 
-# xaringan
+class: middle, center
 
-- The presentation is created using the `xaringan` package
+# Exploratory Statistics
 
-- Use `---` to separate slides and `--` for incremental builds
+```{r, echo = FALSE}
+#Summary statistics
+Summary_table <- BirdLife %>%
+  group_by(Habitat.Density) %>%
+  summarise(mean.Mass.Habitat = mean(Mass), mean.wing.length.habitat = mean(Wing.Length), sum.of.species = n_distinct(Species1))
 
---
+kable(Summary_table, format = "html")
 
-- Like this
+```
 
 ---
 
-# Layouts
 
-You can use plain text
 
-- or bullet points
+
+# Distrubution of Body Mass
+
+```{r recode-species, echo = FALSE}
+# In this chunk I'm doing a bunch of analysis that I don't want to present 
+bird_long <- BirdLife %>%
+  pivot_longer(
+    cols = c(Mass, Wing.Length),
+    names_to = "Trait",
+    values_to = "Value"
+  ) %>%
+  mutate(
+    Value_plot = if_else(Trait == "Mass", log10(Value), Value)
+  )
+# in my slides. But I need the resulting data frame for a plot I want to present.
+iris_modified <- iris %>%
+  mutate(Species = fct_other(Species, keep = "setosa"))
+```
+
+```{r plot-iris, echo = FALSE}
+ggplot(BirdLife, aes(x = Mass, fill = Habitat.Density)) +
+  geom_histogram(bins = 10) +
+  scale_x_log10() +
+ facet_wrap(~ Habitat.Density) + 
+  labs(title = "Mass Distribution by Habitat Density (log scale)",
+       x = "Mass (log10 g)",
+       y = "Count") +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+# theme options: https://ggplot2.tidyverse.org/reference/ggtheme.html
+```
+
+---
+
+## Plot and text
 
 .pull-left[
-or text in two columns $^*$
+- Outliers are birds that cannot fly
+- Dense habitat less concentrated distribution
 ]
 .pull-right[
-- like
-- this
+```{r warning=FALSE, out.width="100%", fig.width=4, echo=FALSE}
+# see how I changed out.width and fig.width from defaults
+# to make the figure bigger
+ggplot(bird_long, aes(x = Trait, y = Value, color = Habitat.Density)) +
+  geom_boxplot(fill = NA, width = 0.6, outlier.shape = 1) +  
+  facet_wrap(~ Habitat.Density) + 
+  scale_y_log10() +   
+  labs(title = "Mass and Wing.Length by Habitat Density",
+       x = "Trait",
+       y = "Value (log10 scale)") +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(face = "bold"),
+    legend.position = "none",
+  )
+```
 ]
 
-.footnote[
-[*] And add footnotes
-]
+---
+
+# Modelling
+
+If you want to generate a table, make sure it is in the HTML format (instead of Markdown or other formats), e.g.,
+
+```{r iris-table, echo = FALSE}
+set.seed(1122)
+BirdLife_split <- initial_split(BirdLife)
+
+train_data <- training(BirdLife_split)
+test_data <- testing(BirdLife_split)
+
+  
+BirdLife_rec <- recipe(
+  Habitat.Density ~ Mass + Wing.Length, 
+  data = train_data
+  ) %>%
+  step_zv(all_predictors())
+
+BirdLife_mod <- logistic_reg() %>%
+  set_engine("glm")
+
+BirdLife_wflow <- workflow() %>%
+  add_model(BirdLife_mod) %>%
+  add_recipe(BirdLife_rec)
+
+BirdLife_fit <- BirdLife_wflow %>%
+  fit(data = train_data)
+
+
+(BirLife_train_pred <- predict(BirdLife_fit, train_data, type = "prob") %>%
+  bind_cols(train_data))
+
+BirLife_train_pred %>%
+  roc_curve(
+    truth = Habitat.Density,
+    .pred_Dense,
+    event_level = "first"
+  ) %>%
+  autoplot()
+```
 
 ---
 
@@ -116,54 +221,6 @@ or text in two columns $^*$
 model <- lm(dist ~ speed, data = cars)
 tidy(model)
 glance(model)
-```
-
----
-
-# Plots
-
-```{r recode-species, echo = FALSE}
-# In this chunk I'm doing a bunch of analysis that I don't want to present 
-# in my slides. But I need the resulting data frame for a plot I want to present.
-iris_modified <- iris %>%
-  mutate(Species = fct_other(Species, keep = "setosa"))
-```
-
-```{r plot-iris, echo = FALSE}
-# Code hidden with echo = FALSE
-# Uses modified iris dataset from previous chunk
-# Play around with height and width until you're happy with the look
-ggplot(data = iris_modified, mapping = aes(x = Sepal.Width, y = Sepal.Length, color = Species)) +
-  geom_point() + 
-  theme_minimal() # theme options: https://ggplot2.tidyverse.org/reference/ggtheme.html
-```
-
----
-
-## Plot and text
-
-.pull-left[
-- Some text
-- goes here
-]
-.pull-right[
-```{r warning=FALSE, out.width="100%", fig.width=4, echo=FALSE}
-# see how I changed out.width and fig.width from defaults
-# to make the figure bigger
-ggplot(penguins, aes(x = bill_length_mm, y = species, color = species)) +
-  geom_boxplot() +
-  theme_minimal()
-```
-]
-
----
-
-# Tables
-
-If you want to generate a table, make sure it is in the HTML format (instead of Markdown or other formats), e.g.,
-
-```{r iris-table, echo = FALSE}
-kable(head(iris), format = "html")
 ```
 
 ---
@@ -214,3 +271,35 @@ Limitations:
 `xaringanthemer` provides some solutions for this that: https://pkg.garrickadenbuie.com/xaringanthemer.
 
 - And if you want more bells and whistles, there is also `xaringanExtra`: https://pkg.garrickadenbuie.com/xaringanExtra.
+
+# xaringan
+
+- The presentation is created using the `xaringan` package
+
+- Use `---` to separate slides and `--` for incremental builds
+
+--
+
+- Like this
+
+---
+
+# Layouts
+
+You can use plain text
+
+- or bullet points
+
+.pull-left[
+or text in two columns $^*$
+]
+.pull-right[
+- like
+- this
+]
+
+.footnote[
+[*] And add footnotes
+]
+
+---

@@ -19,7 +19,15 @@ library(tidyverse)
 # Add any other libraries here
 library(readxl)
 library(janitor)
-
+library(broom)
+library(parsnip)
+library(rsample)
+library(tune)
+library(recipes)
+library(workflows)
+library(ranger)
+library(yardstick)
+library(ggridges)
 
 ```
 
@@ -27,41 +35,199 @@ library(janitor)
 ```{r load-data}
 # load your data 
  
-BirdLife <- read_csv("/Users/reyr/R/Final_project/Birds/ELEData/TraitData/AVONET1_BirdLife.csv")
+
+#Cleaning data 
+BirdLife <- read.csv("data/AVONET1_BirdLife.csv")
+
+BirdLife <- BirdLife %>%
+  mutate(
+    Habitat.Density = case_when(
+      Habitat.Density == "1" ~ "Dense",
+      Habitat.Density == "2" ~ "Open",
+      Habitat.Density == "3" ~ "Open"
+    ),
+    Habitat.Density = fct_relevel(Habitat.Density, "Dense", "Open")
+  )
+
+#Summary statistics
+BirdLife %>%
+  group_by(Habitat.Density) %>%
+  summarise(mean.Mass.Habitat = mean(Mass), mean.wing.length.habitat = mean(Wing.Length), sum.of.species = n_distinct(Species1))
 
 
-Birdlife_Long <- BirdLife %>%
+bird_long <- BirdLife %>%
   pivot_longer(
-    cols = c(Female, Male),
-    names_to = "gender",
-    values_to = "individuals"
+    cols = c(Mass, Wing.Length),
+    names_to = "Trait",
+    values_to = "Value"
+  ) %>%
+  mutate(
+    Value_plot = if_else(Trait == "Mass", log10(Value), Value)
+  )
+
+# Histogram
+ggplot(BirdLife, aes(x = Mass, fill = Habitat.Density)) +
+  geom_histogram(bins = 10) +
+  scale_x_log10() +
+ facet_wrap(~ Habitat.Density) + 
+  labs(title = "Mass Distribution by Habitat Density (log scale)",
+       x = "Mass (log10 g)",
+       y = "Count") +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+bird_long <- BirdLife %>%
+  pivot_longer(
+    cols = c(Mass, Wing.Length),
+    names_to = "Trait",
+    values_to = "Value"
+  ) %>%
+  mutate(
+    Value_plot = if_else(Trait == "Mass", log10(Value), Value)
+  )
+
+#box plot
+ggplot(bird_long, aes(x = Trait, y = Value, color = Habitat.Density)) +
+  geom_boxplot(fill = NA, width = 0.6, outlier.shape = 1) +  
+  facet_wrap(~ Habitat.Density) + 
+  scale_y_log10() +   
+  labs(title = "Mass and Wing.Length by Habitat Density",
+       x = "Trait",
+       y = "Value (log10 scale)") +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(face = "bold"),
+    legend.position = "none",
   )
 
 
-Birdlife_Long %>%
+
+
+
+
+BirdLife %>%
   ggplot(aes(x = (Wing.Length), 
                  y = (Mass), 
                  colour = Habitat, 
-                 size = individuals, 
-                 alpha = 0.3,
-                  )) +
-  geom_point() +
+                 size = Total.individuals
+             )) +
+  geom_point(alpha = 0.5) +
   geom_smooth(method = "lm") +
   guides(size = FALSE, alpha = FALSE) +
-  facet_wrap(. ~ Habitat, scales = "free") +
-  coord_cartesian(
-    xlim = c(0, 400),
-    ylim = c(0, 3000)
+  facet_wrap(. ~ Habitat.Density, scales = "free")
+
+  
+  
+(result <- BirdLife %>%
+  group_by(Habitat.Density) %>%
+  group_modify( ~ {
+    m <- linear_reg() %>%
+      set_engine("lm") %>%
+      fit(Wing.Length ~ Mass, data = .x)
+  tidy(m)
+  }))
+
+
+
+# Each coefficient describes the expected difference between wing length in
+# that particular habitat compeared to the baseline
+linear_reg()%>%
+  set_engine("lm") %>%
+  fit(Mass ~ Habitat.Density, data = BirdLife) %>%
+  tidy()
+  
+#Forest <- BirdLife %>%
+  #filter(Habitat == "Forest")
+
+wl_mass_fit <- linear_reg()%>%
+  set_engine("lm") %>%
+  fit(Wing.Length ~ log(Mass), data = BirdLife)
+
+wl_mass_fit_aug <- augment(wl_mass_fit$fit)
+
+ggplot(wl_mass_fit_aug, mapping = aes(x = .fitted, y = .resid)) +
+  geom_point(alpha = 0.5) +
+  geom_hline(yintercept = 0, color = "gray", lty = "dashed") +
+  labs(x = "Predicted wing length", y = "Residuals")
+
+
+ggplot(BirdLife) +
+  geom_histogram(aes(x = Mass)) +
+  scale_x_log10() +
+  facet_wrap(. ~ Habitat.Density, scales = "free")
+
+
+#Bridge line
+ggplot(bird_long, aes(x = Value_plot, y = Habitat.Density, fill = Habitat.Density)) +
+  geom_density_ridges(
+    alpha = 0.5,        
+    scale = 1,          
+  ) +
+  facet_wrap(~ Trait, scales = "free_x", ncol = 1) +  
+  labs(
+    title = "Distribution of Mass (log10) and Wing Length by Habitat Density",
+    x = "Value (log10 for Mass)",
+    y = "Habitat Density"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "none",
   )
 
-  
+
+
+
+#MODEL BUILDING
+set.seed(1122)
+BirdLife_split <- initial_split(BirdLife)
+
+train_data <- training(BirdLife_split)
+test_data <- testing(BirdLife_split)
 
   
+BirdLife_rec <- recipe(
+  Habitat.Density ~ Mass + Wing.Length, 
+  data = train_data
+  ) %>%
+  step_zv(all_predictors())
+
+BirdLife_mod <- logistic_reg() %>%
+  set_engine("glm")
+
+BirdLife_wflow <- workflow() %>%
+  add_model(BirdLife_mod) %>%
+  add_recipe(BirdLife_rec)
+
+BirdLife_fit <- BirdLife_wflow %>%
+  fit(data = train_data)
+
+
+(BirLife_train_pred <- predict(BirdLife_fit, train_data, type = "prob") %>%
+  bind_cols(train_data))
+
+BirLife_train_pred %>%
+  roc_curve(
+    truth = Habitat.Density,
+    .pred_Dense,
+    event_level = "first"
+  ) %>%
+  autoplot()
+
+(summary(BirdLife_rec))
+
+
+# MODEELLING WITH ALL PREDICTATORS
 
 
 
+#step_dummy(all_nomial(), -all_outcomes()) %>%
+# FOLDING?
 
-
+#set.seed(345)
+#folds <- vfold_cv(BirdLife, v = 5)
+#set.seed(456)
+#BirdLife_fit_rs <- BirdLife_wflow %>%
+  #fit_resamples(folds)
 
 
 ```
