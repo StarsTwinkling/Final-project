@@ -30,12 +30,7 @@ library(gghighlight)
 
 ## Research Question
 
-Describe your research question here.
-Include why this question might be of interest.
-
-the research we mainly want to focus on are the effect that the mass has on the wing length of a specie of bird and how this affect the density of the habitat that the birds live in, usually it's harder to stay afloat the heavier the object is, so birds tend to evolve to be as light as they can be, but for some predatory birds,
-
-core idea: the heavier they are, the stronger their wings would have to be to support them to float in air
+the research we mainly want to focus on are the effect that the mass has on the wing length of a specie of bird and whether this has an impact on the density of the habitat that the birds live in, usually birds tend to evolve themselves to become lighter, so it's easier and takes less effort to fly, but for various reasons some birds are heavier, and we want to know whether these birds would have to compensate for this by making their wings stronger and larger and how this increased wing size would affect the area they need for living.
 
 ## Data Overview
 
@@ -63,7 +58,8 @@ table2 <- tribble(
 knitr::kable(table2)
 ```
 
-Citation: AVONET. (2022). ‘AVONET: morphological, ecological and geographical data for all birds’. Available at: <https://figshare.com/s/b990722d72a26b5bfead>. Accessed: 9 November 2025
+Citation: 
+AVONET. (2022). ‘AVONET: morphological, ecological and geographical data for all birds’. Available at: <https://figshare.com/s/b990722d72a26b5bfead>. Accessed: 9 November 2025
 
 ## Findings
 
@@ -84,7 +80,7 @@ BirdLife %>%
   )
 ```
 
-this made the graph slightly harder to see and made us wonder as to why that might be the case, after some searching we found out that the ten outliers are mainly ostrich, cassowary, emus, penguins and rhea, all of them flightless,
+this made the graph slightly harder to see and made us wonder as to why that might be the case, after some searching we found out that the ten outliers are mainly ostrich, cassowary, emus, penguins and rhea, all of them flightless
 
 ```{r}
 BirdLife %>%
