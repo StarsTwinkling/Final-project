@@ -152,7 +152,7 @@ iris_modified <- iris %>%
   mutate(Species = fct_other(Species, keep = "setosa"))
 ```
 
-```{r delet?, echo = FALSE}
+```{r maybe delete, echo = FALSE}
 ggplot(BirdLife, aes(x = Mass, fill = Habitat.Density)) +
   geom_histogram(bins = 100) +
   scale_x_log10() +
