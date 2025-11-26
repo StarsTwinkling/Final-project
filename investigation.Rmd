@@ -37,7 +37,9 @@ library(ggridges)
  
 
 #Cleaning data 
-BirdLife <- read.csv("data/AVONET1_BirdLife.csv")
+BirdLife <- read.csv("data/AVONET1_BirdLife.csv") %>%
+  filter(Order1 == "Passeriformes") %>%
+  filter(!is.na(Habitat.Density))
 
 BirdLife <- BirdLife %>%
   mutate(
@@ -157,23 +159,6 @@ ggplot(BirdLife) +
   facet_wrap(. ~ Habitat.Density, scales = "free")
 
 
-#Bridge line
-ggplot(bird_long, aes(x = Value_plot, y = Habitat.Density, fill = Habitat.Density)) +
-  geom_density_ridges(
-    alpha = 0.5,        
-    scale = 1,          
-  ) +
-  facet_wrap(~ Trait, scales = "free_x", ncol = 1) +  
-  labs(
-    title = "Distribution of Mass (log10) and Wing Length by Habitat Density",
-    x = "Value (log10 for Mass)",
-    y = "Habitat Density"
-  ) +
-  theme_minimal() +
-  theme(
-    legend.position = "none",
-  )
-
 
 
 
@@ -186,7 +171,7 @@ test_data <- testing(BirdLife_split)
 
   
 BirdLife_rec <- recipe(
-  Habitat.Density ~ Mass + Wing.Length, 
+  Habitat.Density ~ Mass + Wing.length + Beak.Width, 
   data = train_data
   ) %>%
   step_zv(all_predictors())

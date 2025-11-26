@@ -1,6 +1,6 @@
 ---
-title: "The Body Mass and Wing Length Distrubution in Passeriformes "
-subtitle: "and The Replication Crisis"
+title: "How Bird Body Mass and Traits Shape Habitat Prefrences"
+subtitle: "Open vs. Dense Habitats, What is the Difference?"
 author: "Tidybear123 <br> Ishildur, Jason, Laith and Richard"
 institute: "University of Edinburgh"
 date: "`r Sys.Date()`"
@@ -32,6 +32,18 @@ library(tidymodels)
 library(palmerpenguins)
 library(knitr)
 library(xaringanthemer)
+
+library(readxl)
+library(janitor)
+library(broom)
+library(parsnip)
+library(rsample)
+library(tune)
+library(recipes)
+library(workflows)
+library(ranger)
+library(yardstick)
+library(ggridges)
 ```
 
 ```{r setup, include=FALSE}
@@ -40,7 +52,7 @@ knitr::opts_chunk$set(fig.retina = 3, dpi = 300, fig.width = 6, fig.asp = 0.618,
 ```
 
 ```{r load-data, include=FALSE}
-BirdLife <- read.csv("data/AVONET1_BirdLife.csv")
+BirdLife_file <- read.csv("data/AVONET1_BirdLife.csv")
 
 ```
 
@@ -55,8 +67,7 @@ style_xaringan(
 
 class: center, middle
 
-## How does body mass relate to winglength in birds, and how does it differ by habitats?
-
+## How does body mass in Passerformies vary between open and dense habitats, and to what extent do additional traits help explain habitat preference?
 
 ---
 
@@ -64,20 +75,26 @@ class: center, middle
 
 # Background and Data
 
+.pull-left[
 - Data set from the AVONET data base
 - Comparing with already existing data
-```{r Passeriformes1, echo = FALSE, out.width = "70%", fig.align = "center", fig.cap = "Source: @Richad?"}
+]
+.pull-right[
+```{r Passeriformes1, echo = FALSE, out.width = "150%", fig.align = "center", fig.cap = "Source: @Richad?"}
 include_graphics("img/Research.png")
 ```
-
+]
 ---
 
 # Cleaning and techniques
 
 ```{r cleaning}
 # Cleaning
-(BirdLife <- BirdLife %>%
-  filter(Order1 == "Passeriformes", !is.na(Habitat.Density))%>%
+
+BirdLife<- BirdLife_file %>%
+  filter(Order1 == "Passeriformes", 
+         !is.na(Habitat.Density))%>%
+   #filter(Mass < 150) %>%
   mutate(
     Habitat.Density = case_when(
       Habitat.Density == 1 ~ "Dense",
@@ -85,7 +102,7 @@ include_graphics("img/Research.png")
       Habitat.Density == 3 ~ "Open"
     ),
     Habitat.Density = fct_relevel(Habitat.Density, "Dense", "Open")
-  ))
+  )
 ```
 
 
@@ -99,10 +116,17 @@ class: middle, center
 #Summary statistics
 Summary_table <- BirdLife %>%
   group_by(Habitat.Density) %>%
-  summarise(mean.Mass.Habitat = mean(Mass), mean.wing.length.habitat = mean(Wing.Length), sum.of.species = n_distinct(Species1))
+  summarise(Mean = mean(Mass), Median = median(Mass), Total = n_distinct(Species1))
 
 kable(Summary_table, format = "html")
 
+#BirdLife %>%
+  #group_by(Habitat.Density, outlier = Mass > 150) %>%
+  #summarise(n = n())
+
+#BirdLife %>%
+  #group_by(Habitat.Density, crow = Family1 == "Corvidae") %>%
+  #summarise(n = n())
 ```
 
 ---
@@ -116,21 +140,21 @@ kable(Summary_table, format = "html")
 # In this chunk I'm doing a bunch of analysis that I don't want to present 
 bird_long <- BirdLife %>%
   pivot_longer(
-    cols = c(Mass, Wing.Length),
+    cols = c(Mass),
     names_to = "Trait",
     values_to = "Value"
-  ) %>%
-  mutate(
-    Value_plot = if_else(Trait == "Mass", log10(Value), Value)
-  )
+  ) #%>%
+  #mutate(
+   # Value_plot = if_else(Trait == "Mass", log10(Value), Value)
+  #)
 # in my slides. But I need the resulting data frame for a plot I want to present.
 iris_modified <- iris %>%
   mutate(Species = fct_other(Species, keep = "setosa"))
 ```
 
-```{r plot-iris, echo = FALSE}
+```{r delet?, echo = FALSE}
 ggplot(BirdLife, aes(x = Mass, fill = Habitat.Density)) +
-  geom_histogram(bins = 10) +
+  geom_histogram(bins = 100) +
   scale_x_log10() +
  facet_wrap(~ Habitat.Density) + 
   labs(title = "Mass Distribution by Habitat Density (log scale)",
@@ -144,11 +168,22 @@ ggplot(BirdLife, aes(x = Mass, fill = Habitat.Density)) +
 
 ---
 
-## Plot and text
+## Distrubution of Body Mass
 
 .pull-left[
-- Outliers are birds that cannot fly
-- Dense habitat less concentrated distribution
+```{r histogram, echo = FALSE, out.width = "150%"}
+ggplot(BirdLife, aes(x = Mass, fill = Habitat.Density)) +
+  geom_histogram(bins = 100) +
+  scale_x_log10() +
+ facet_wrap(~ Habitat.Density) + 
+  labs(title = "Mass Distribution by Habitat Density (log scale)",
+       x = "Mass (log10 g)",
+       y = "Count") +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+# theme options: https://ggplot2.tidyverse.org/reference/ggtheme.html
+```
 ]
 .pull-right[
 ```{r warning=FALSE, out.width="100%", fig.width=4, echo=FALSE}
@@ -171,64 +206,110 @@ ggplot(bird_long, aes(x = Trait, y = Value, color = Habitat.Density)) +
 
 ---
 
-# Modelling
+# Modelling: Are there other predictors than mass?
 
 If you want to generate a table, make sure it is in the HTML format (instead of Markdown or other formats), e.g.,
 
-```{r iris-table, echo = FALSE}
-set.seed(1122)
+```{r model comperison, echo = FALSE}
+
+set.seed(222)
 BirdLife_split <- initial_split(BirdLife)
 
 train_data <- training(BirdLife_split)
 test_data <- testing(BirdLife_split)
 
+folds <- vfold_cv(train_data, v = 10)
   
-BirdLife_rec <- recipe(
-  Habitat.Density ~ Mass + Wing.Length, 
+rec_mass <- recipe(
+  Habitat.Density ~ Mass,
   data = train_data
-  ) %>%
+) %>%
   step_zv(all_predictors())
 
-BirdLife_mod <- logistic_reg() %>%
+mod_glm <- logistic_reg() %>%
   set_engine("glm")
 
-BirdLife_wflow <- workflow() %>%
-  add_model(BirdLife_mod) %>%
-  add_recipe(BirdLife_rec)
+wflow_mass <- workflow() %>%
+  add_model(mod_glm) %>%
+  add_recipe(rec_mass)
 
-BirdLife_fit <- BirdLife_wflow %>%
-  fit(data = train_data)
+cv_mass <- fit_resamples(
+  wflow_mass,
+  resamples = folds,
+  metrics = metric_set(roc_auc, accuracy),
+  control = control_resamples(save_pred = TRUE)
+)
+
+collect_metrics(cv_mass)
+
+rec_multi <- recipe(
+  Habitat.Density ~ Mass + Wing.Length + Beak.Length_Culmen + Beak.Length_Nares
++ Beak.Width + Beak.Depth + Tarsus.Length + Wing.Length + Kipps.Distance + 	
+Secondary1 + Tail.Length,
+  data = train_data
+) %>%
+  step_zv(all_predictors())
+
+wflow_multi <- workflow() %>%
+  add_model(mod_glm) %>%
+  add_recipe(rec_multi)
+
+(fit_multi <- wflow_multi %>%
+  fit(data = train_data))
+
+cv_multi <- fit_resamples(
+  wflow_multi,
+  resamples = folds,
+  metrics = metric_set(roc_auc, accuracy),
+  control = control_resamples(save_pred = TRUE))
 
 
-(BirLife_train_pred <- predict(BirdLife_fit, train_data, type = "prob") %>%
-  bind_cols(train_data))
+collect_metrics(cv_multi)
 
-BirLife_train_pred %>%
+comperasion <- bind_rows(
+  collect_metrics(cv_mass)  %>% mutate(model = "Mass only"),
+  collect_metrics(cv_multi) %>% mutate(model = "All measurements")
+) 
+
+comperasion %>%
+  select(.metric, mean, std_err, model)
+
+```
+
+---
+
+# Final modelling
+
+```{r ROC-curve, echo = FALSE}
+final_fit <- wflow_multi %>%
+  fit(data = test_data)
+
+train_pred <- predict(final_fit, test_data, type = "prob") %>%
+  bind_cols(test_data)
+
+train_pred %>%
   roc_curve(
     truth = Habitat.Density,
     .pred_Dense,
     event_level = "first"
   ) %>%
   autoplot()
+
+train_pred %>%
+  roc_auc(
+    truth = Habitat.Density,
+    .pred_Dense,
+    event_level = "first"
+  )
+
 ```
 
 ---
 
-# Code
-
-```{r boring-regression}
-# a boring regression
-model <- lm(dist ~ speed, data = cars)
-tidy(model)
-glance(model)
-```
-
----
-
-# Images
+# Limitations
 
 ```{r castle, echo = FALSE, out.width = "55%", fig.align = "center", fig.cap = "Image credit: Photo by Jörg Angeli on Unsplash."}
-include_graphics("img/edinburgh-castle.jpg")
+include_graphics("img/Robin.webp")
 ```
 
 Or you can also include a full page image. See next slide.
