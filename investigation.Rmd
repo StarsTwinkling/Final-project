@@ -171,7 +171,7 @@ test_data <- testing(BirdLife_split)
 
   
 BirdLife_rec <- recipe(
-  Habitat.Density ~ Mass + Wing.length + Beak.Width, 
+  Habitat.Density ~ Mass + Wing.Length + Beak.Width, 
   data = train_data
   ) %>%
   step_zv(all_predictors())

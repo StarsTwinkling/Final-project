@@ -30,20 +30,14 @@ library(gghighlight)
 
 ## Research Question
 
-
 Describe your research question here.
 Include why this question might be of interest.
 
-the research we mainly want to focus on are the effect that the mass has on the wing length of a specie of bird, usually it's harder to stay afloat the heavier the object is, so birds tend to evolve to be as light as they can be 
+the research we mainly want to focus on are the effect that the mass has on the wing length of a specie of bird and how this affect the density of the habitat that the birds live in, usually it's harder to stay afloat the heavier the object is, so birds tend to evolve to be as light as they can be, but for some predatory birds,
 
 core idea: the heavier they are, the stronger their wings would have to be to support them to float in air
 
-## Data
-
-Briefly describe your dataset here - include a description of the key variables you will be investigating.
-Include a citation for your data.
-See <http://libraryguides.vu.edu.au/c.php?g=386501&p=4347840> for guidance on proper citation for datasets.
-If you got your data off the web, make sure to state the retrieval date.
+## Data Overview
 
 for this project, we will be using the data set AVONET: morphological, ecological and geographical data for all birds, this database includes data about 90000 birds from across 11009 species of birds from all across the world, the data set includes data such as beak length, tail length, habitat and many more, for our project, we will be mainly looking at three variables, namely habitat density, mass and wing length
 
@@ -68,10 +62,63 @@ table2 <- tribble(
 )
 knitr::kable(table2)
 ```
-Citation: 
-AVONET. (2022). ‘AVONET: morphological, ecological and geographical data for all birds’. Available at: https://figshare.com/s/b990722d72a26b5bfead. Accessed: 9 November 2025
+
+Citation: AVONET. (2022). ‘AVONET: morphological, ecological and geographical data for all birds’. Available at: <https://figshare.com/s/b990722d72a26b5bfead>. Accessed: 9 November 2025
 
 ## Findings
+
+### Wing Length against Mass
+
+we first plotted a graph of the mass of birds against their wing length in an attempt to find any sort of pattern or trend, after we did this we realized something strange, some of the outliers in the data seems too extreme, while the majority of birds have mass below 11000, there are ten species with mass ranging from 23000 to 111000
+
+```{r}
+BirdLife <- read.csv("data/AVONET1_BirdLife.csv")
+BirdLife %>%
+  select(Mass,Wing.Length,Species1) %>%
+  ggplot(aes(y = Wing.Length, x = Mass)) +
+  geom_jitter() +
+  labs(
+    title = "bird mass against wing length",
+    y = "wing length in cm",
+    x = "mass in gram"
+  )
+```
+
+this made the graph slightly harder to see and made us wonder as to why that might be the case, after some searching we found out that the ten outliers are mainly ostrich, cassowary, emus, penguins and rhea, all of them flightless,
+
+```{r}
+BirdLife %>%
+  select(Mass,Wing.Length,Species1) %>%
+  ggplot(aes(y = Wing.Length, x = Mass)) +
+  geom_jitter() +
+  gghighlight(Mass > 15000, label_key = Species1) +
+  labs(
+    title = "bird mass against wing length",
+    y = "wing length in cm",
+    x = "mass in gram"
+  )
+```
+
+### Wing Length against Mass for birds under 15000 grams
+
+since we are mainly looking at the effect that wing length have at the mass of the birds we decided that they won't matter as much since their weight are supported by their leg and being on ground rather than having stronger wings like the other birds, so we removed these outliers from our graph
+
+```{r}
+BirdLife %>%
+  filter(Mass < 15000) %>%
+  select(Mass,Wing.Length) %>%
+  ggplot(aes(y = Wing.Length, x = Mass)) +
+  geom_point() +
+  labs(
+    title = "bird mass against wing length",
+    y = "wing length in cm",
+    x = "mass in gram"
+  )
+```
+
+
+# the instructions
+
 
 The write-up of your project and findings go here.
 
@@ -93,52 +140,6 @@ If you don't want to use the addin you can always copy and paste the text into M
 You can also load your data here and present any analysis results / plots.
 Make sure to hide your code with `echo = FALSE` unless the point you are trying to make is about the code itself, in which case you should show your code.
 
-### Wing Length against Mass
-we first plotted a graph of the mass of birds against their wing length in an attempt to find any sort of pattern or trend, after we did this we realized something strange, some of the outliers in the data seems too extreme, while the majority of birds have mass below 11000, there are ten species with mass ranging from 23000 to 111000
-
-```{r}
-BirdLife <- read.csv("data/AVONET1_BirdLife.csv")
-BirdLife %>%
-  select(Mass,Wing.Length,Species1) %>%
-  ggplot(aes(y = Wing.Length, x = Mass)) +
-  geom_jitter() +
-  labs(
-    title = "bird mass against wing length",
-    y = "wing length in cm",
-    x = "mass in gram"
-  )
-```
-
-this made the graph slightly harder to see and made us wonder as to why that might be the case, after some searching we found out that the ten outliers are mainly ostrich, cassowary, emus, penguins and rhea, all of them flightless, 
-
-```{r}
-BirdLife %>%
-  select(Mass,Wing.Length,Species1) %>%
-  ggplot(aes(y = Wing.Length, x = Mass)) +
-  geom_jitter() +
-  gghighlight(Mass > 15000, label_key = Species1) +
-  labs(
-    title = "bird mass against wing length",
-    y = "wing length in cm",
-    x = "mass in gram"
-  )
-```
-
-### Wing Length against Mass for birds under 15000 grams
-since we are mainly looking at the effect that wing length have at the mass of the birds we decided that they won't matter as much since their weight are supported by their leg and being on ground rather than having stronger wings like the other birds, so we removed these outliers from our graph
-
-```{r}
-BirdLife %>%
-  filter(Mass < 15000) %>%
-  select(Mass,Wing.Length) %>%
-  ggplot(aes(y = Wing.Length, x = Mass)) +
-  geom_point() +
-  labs(
-    title = "bird mass against wing length",
-    y = "wing length in cm",
-    x = "mass in gram"
-  )
-```
 
 ## References
 
