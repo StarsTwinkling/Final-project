@@ -13,7 +13,7 @@ output:
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
-    
+   
       
 ---
 
@@ -65,19 +65,26 @@ style_xaringan(
 
 ```
 
+background-color: #f7fbff
 class: center, middle
 
 ## How does body mass in Passerformies vary between open and dense habitats, and to what extent do additional traits help explain habitat preference?
 
 ---
-
-class: center, middle
-
+background-color: #f7fbff
+color: #003049
 # Background and Data
 
 .pull-left[
-- Data set from the AVONET data base
-- Comparing with already existing data
+- Largest and most diverse bird order
+ 
+- Differences in traits based on habitats
+ 
+- Prior research suggests a correlation between body mass and habitat structure
+
+- Does the AVONET data shows similar patterns?
+
+
 ]
 .pull-right[
 ```{r Passeriformes1, echo = FALSE, out.width = "150%", fig.align = "center", fig.cap = "Source: @Richad?"}
@@ -85,40 +92,65 @@ include_graphics("img/Research.png")
 ```
 ]
 ---
-
+background-color: #f7fbff
 # Cleaning and techniques
 
+.pull-left[
+ - AVONET data set: functional traits for all bird species.
+
+
+ - Difference in which species within the Passeriformes were used
+
+
+ - Worked with the species‐average data set
+
+
+ - Habitat.density: discrete variable ranging from 1 = dense to 3 = open.
+
+
+ - Combined semi-open and open categories due to different sample sizes
+
+ 
+]
+.pull-right[
 ```{r cleaning}
 # Cleaning
 
-BirdLife<- BirdLife_file %>%
+BirdLife <- BirdLife_file %>%
   filter(Order1 == "Passeriformes", 
          !is.na(Habitat.Density))%>%
-   #filter(Mass < 150) %>%
   mutate(
     Habitat.Density = case_when(
       Habitat.Density == 1 ~ "Dense",
-      Habitat.Density == 2 ~ "Open",
-      Habitat.Density == 3 ~ "Open"
+      Habitat.Density == 2 | 3 ~ "Open",
     ),
     Habitat.Density = fct_relevel(Habitat.Density, "Dense", "Open")
   )
 ```
-
+]
 
 ---
-
-class: middle, center
-
+background-color: #f7fbff
 # Exploratory Statistics
 
+.pull-left[
+- Our results show a different trend than the published study
+
+
+- Birds in open habitats are lighter on average
+
+
+- The dense vs. open groups are similar in size
+]
+
+.pull-right[
 ```{r, echo = FALSE}
 #Summary statistics
 Summary_table <- BirdLife %>%
   group_by(Habitat.Density) %>%
   summarise(Mean = mean(Mass), Median = median(Mass), Total = n_distinct(Species1))
 
-kable(Summary_table, format = "html")
+kable(Summary_table, digits = 3, format = "html")
 
 #BirdLife %>%
   #group_by(Habitat.Density, outlier = Mass > 150) %>%
@@ -128,13 +160,14 @@ kable(Summary_table, format = "html")
   #group_by(Habitat.Density, crow = Family1 == "Corvidae") %>%
   #summarise(n = n())
 ```
+]
 
 ---
 
 
 
 
-# Distrubution of Body Mass
+
 
 ```{r recode-species, echo = FALSE}
 # In this chunk I'm doing a bunch of analysis that I don't want to present 
@@ -152,26 +185,35 @@ iris_modified <- iris %>%
   mutate(Species = fct_other(Species, keep = "setosa"))
 ```
 
-```{r maybe delete, echo = FALSE}
-ggplot(BirdLife, aes(x = Mass, fill = Habitat.Density)) +
-  geom_histogram(bins = 100) +
-  scale_x_log10() +
- facet_wrap(~ Habitat.Density) + 
-  labs(title = "Mass Distribution by Habitat Density (log scale)",
-       x = "Mass (log10 g)",
-       y = "Count") +
-  theme_minimal() +
-  theme(legend.position = "none")
 
-# theme options: https://ggplot2.tidyverse.org/reference/ggtheme.html
-```
-
----
-
+background-color: #f7fbff
 ## Distrubution of Body Mass
 
+
+
 .pull-left[
-```{r histogram, echo = FALSE, out.width = "150%"}
+ - Use of log scale
+
+
+ - Both habitats show a right-skewed distribution
+
+
+ - Similar mass range (5–1000 g)
+
+
+  - Higher frequency of some smaller birds compared with open habitats
+
+
+ - Similar IQRs, though open habitats have a slightly smaller middle-spread.
+
+
+ - Open habitats show a wider spread of outliers
+
+
+ - Most outliers are part of Corvidae (crow family)
+]
+.pull-right[
+```{r histogram, echo = FALSE, out.width = "75%"}
 ggplot(BirdLife, aes(x = Mass, fill = Habitat.Density)) +
   geom_histogram(bins = 100) +
   scale_x_log10() +
@@ -184,16 +226,15 @@ ggplot(BirdLife, aes(x = Mass, fill = Habitat.Density)) +
 
 # theme options: https://ggplot2.tidyverse.org/reference/ggtheme.html
 ```
-]
-.pull-right[
-```{r warning=FALSE, out.width="100%", fig.width=4, echo=FALSE}
+
+```{r warning=FALSE, out.width="75%", fig.width=4, echo=FALSE}
 # see how I changed out.width and fig.width from defaults
 # to make the figure bigger
 ggplot(bird_long, aes(x = Trait, y = Value, color = Habitat.Density)) +
   geom_boxplot(fill = NA, width = 0.6, outlier.shape = 1) +  
   facet_wrap(~ Habitat.Density) + 
   scale_y_log10() +   
-  labs(title = "Mass and Wing.Length by Habitat Density",
+  labs(title = "Mass by Habitat Density",
        x = "Trait",
        y = "Value (log10 scale)") +
   theme_minimal() +
@@ -208,7 +249,6 @@ ggplot(bird_long, aes(x = Trait, y = Value, color = Habitat.Density)) +
 
 # Modelling: Are there other predictors than mass?
 
-If you want to generate a table, make sure it is in the HTML format (instead of Markdown or other formats), e.g.,
 
 ```{r model comperison, echo = FALSE}
 
@@ -240,7 +280,6 @@ cv_mass <- fit_resamples(
   control = control_resamples(save_pred = TRUE)
 )
 
-collect_metrics(cv_mass)
 
 rec_multi <- recipe(
   Habitat.Density ~ Mass + Wing.Length + Beak.Length_Culmen + Beak.Length_Nares
@@ -254,8 +293,8 @@ wflow_multi <- workflow() %>%
   add_model(mod_glm) %>%
   add_recipe(rec_multi)
 
-(fit_multi <- wflow_multi %>%
-  fit(data = train_data))
+fit_multi <- wflow_multi %>%
+  fit(data = train_data)
 
 cv_multi <- fit_resamples(
   wflow_multi,
@@ -264,15 +303,15 @@ cv_multi <- fit_resamples(
   control = control_resamples(save_pred = TRUE))
 
 
-collect_metrics(cv_multi)
-
 comperasion <- bind_rows(
   collect_metrics(cv_mass)  %>% mutate(model = "Mass only"),
   collect_metrics(cv_multi) %>% mutate(model = "All measurements")
 ) 
 
-comperasion %>%
+comperison_table <- comperasion %>%
   select(.metric, mean, std_err, model)
+
+kable(comperison_table, digits = 3, format = "html")
 
 ```
 
@@ -280,7 +319,16 @@ comperasion %>%
 
 # Final modelling
 
-```{r ROC-curve, echo = FALSE}
+.pull-left[
+```{r Fitted model w multiple varibles, echo = FALSE, out.width = "55%"}
+
+fit_table <- tidy(fit_multi)
+kable(fit_table, digits = 3, format = "html")
+
+```
+]
+.pull-right[
+```{r ROC-curve, echo = FALSE, out.width = "135%"}
 final_fit <- wflow_multi %>%
   fit(data = test_data)
 
@@ -294,7 +342,9 @@ train_pred %>%
     event_level = "first"
   ) %>%
   autoplot()
+```
 
+```{r Calculating area under curve, echo = FALSE, results = "hide"}
 train_pred %>%
   roc_auc(
     truth = Habitat.Density,
@@ -303,26 +353,35 @@ train_pred %>%
   )
 
 ```
-
+]
 ---
 
 # Limitations
 
+.pull-left[
 ```{r castle, echo = FALSE, out.width = "55%", fig.align = "center", fig.cap = "Image credit: Photo by Jörg Angeli on Unsplash."}
 include_graphics("img/Robin.webp")
 ```
+]
+.pull-right[
+- Species traits are based on average measurements
 
-Or you can also include a full page image. See next slide.
+- Habitat categories were simplified
+
+
+- Different families within Passeriformes and uses different habitat definitions.
+
+
+- Habitat-type seems to be influenced by multiple traits
+
+
+- Further exploration
+]
+
 
 ---
 
-
-class: inverse, center, middle
-background-image: url(img/edinburgh-castle.jpg)
-background-size: contain
----
-
-# Math Expressions
+# Refrences
 
 You can write LaTeX math expressions inside a pair of dollar signs, e.g. &#36;\alpha+\beta$ renders $\alpha+\beta$. You can use the display style with double dollar signs:
 
@@ -384,3 +443,4 @@ or text in two columns $^*$
 ]
 
 ---
+
