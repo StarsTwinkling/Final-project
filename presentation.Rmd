@@ -199,17 +199,10 @@ background-color: #f7fbff
  - Both habitats show a left-skewed distribution
 
 
- - Similar mass range
-
-
   - Dense habitat has two peaks, slightly more left
-  
 
 
- - Similar IQRs, though open habitats have a slightly smaller middle-spread.
-
-
- - Open habitats show a wider spread of outliers
+ - Similar IQRs, though open habitats have a slightly smaller middle-spread
 
 
  - Most outliers are part of Corvidae (crow family)
@@ -291,8 +284,7 @@ cv_mass <- fit_resamples(
 
 rec_multi <- recipe(
   Habitat.Density ~ Mass + Wing.Length + Beak.Length_Culmen + Beak.Length_Nares
-+ Beak.Width + Beak.Depth + Tarsus.Length + Wing.Length + Kipps.Distance + 	
-Secondary1 + Tail.Length,
++ Beak.Width + Beak.Depth + Tarsus.Length + Wing.Length + Kipps.Distance + Tail.Length,
   data = train_data
 ) %>%
   step_zv(all_predictors())
@@ -317,7 +309,13 @@ comperasion <- bind_rows(
 ) 
 
 comperison_table <- comperasion %>%
-  select(.metric, mean, std_err, model)
+  select(.metric, mean, std_err, model) %>%
+  rename(
+    Metric = .metric,
+    Mean = mean,
+    Std_Error = std_err,
+    Model = model
+  )
 
 kable(comperison_table, digits = 3, format = "html")
 
@@ -328,9 +326,15 @@ background-color: #f7fbff
 # Final modelling
 
 .pull-left[
-```{r Fitted model w multiple varibles, echo = FALSE, out.width = "55%"}
+```{r Fitted model w multiple varibles, echo = FALSE}
 
-fit_table <- tidy(fit_multi)
+fit_table <- tidy(fit_multi) %>%
+  select(term, estimate,  std.error) %>%
+  rename(
+    Term = term,
+    Estimate = estimate,
+    Std_Error = std.error
+  )
 kable(fit_table, digits = 3, format = "html")
 
 ```
@@ -351,6 +355,7 @@ train_pred %>%
   ) %>%
   autoplot()
 ```
+]
 
 ```{r Calculating area under curve, echo = FALSE, results = "hide"}
 train_pred %>%
@@ -361,13 +366,12 @@ train_pred %>%
   )
 
 ```
-]
 ---
 background-color: #f7fbff
 # Limitations / Summary
 
 .pull-left[
-```{r castle, echo = FALSE, out.width = "55%", fig.align = "center", fig.cap = "Image credit: Photo by Hans Rentsch on Green Feathers."}
+```{r castle, echo = FALSE, out.width = "85%", fig.align = "center", fig.cap = "Image credit: Photo by Hans Rentsch on Green Feathers."}
 include_graphics("img/Robin.webp")
 ```
 ]
