@@ -82,7 +82,7 @@ color: #003049
 
 ]
 .pull-right[
-```{r Passeriformes1, echo = FALSE, out.width = "150%", fig.align = "center", fig.cap = "Source: @Richad?"}
+```{r Passeriformes1, echo = FALSE, out.width = "190%", fig.align = "center"}
 include_graphics("img/Research.png")
 ```
 ]
@@ -94,7 +94,7 @@ class: center, middle
 ---
 
 background-color: #f7fbff
-# Cleaning and techniques
+# Cleaning the data
 
 .pull-left[
  - AVONET data set: functional traits for all bird species.
@@ -202,7 +202,7 @@ background-color: #f7fbff
  - Similar mass range
 
 
-  - Higher frequency of some smaller birds compared with open habitats
+  - Dense habitat has two peaks, slightly more left
   
 
 
@@ -251,8 +251,14 @@ ggplot(bird_long, aes(x = Trait, y = Value, color = Habitat.Density)) +
 background-color: #f7fbff
 # Modelling: Are there other predictors than mass?
 
+.pull-left[
 
-```{r model comperison, echo = FALSE}
+- Used cross validation
+
+- Body mass alone not a strong enough predictor
+]
+.pull-right[
+```{r model building, echo = FALSE}
 
 set.seed(222)
 BirdLife_split <- initial_split(BirdLife)
@@ -278,7 +284,7 @@ wflow_mass <- workflow() %>%
 cv_mass <- fit_resamples(
   wflow_mass,
   resamples = folds,
-  metrics = metric_set(roc_auc, accuracy),
+  metrics = metric_set(roc_auc),
   control = control_resamples(save_pred = TRUE)
 )
 
@@ -301,7 +307,7 @@ fit_multi <- wflow_multi %>%
 cv_multi <- fit_resamples(
   wflow_multi,
   resamples = folds,
-  metrics = metric_set(roc_auc, accuracy),
+  metrics = metric_set(roc_auc),
   control = control_resamples(save_pred = TRUE))
 
 
@@ -316,7 +322,7 @@ comperison_table <- comperasion %>%
 kable(comperison_table, digits = 3, format = "html")
 
 ```
-
+]
 ---
 background-color: #f7fbff
 # Final modelling
@@ -361,7 +367,7 @@ background-color: #f7fbff
 # Limitations / Summary
 
 .pull-left[
-```{r castle, echo = FALSE, out.width = "55%", fig.align = "center", fig.cap = "Image credit: Photo by Jörg Angeli on Unsplash."}
+```{r castle, echo = FALSE, out.width = "55%", fig.align = "center", fig.cap = "Image credit: Photo by Hans Rentsch on Green Feathers."}
 include_graphics("img/Robin.webp")
 ```
 ]
@@ -388,3 +394,5 @@ background-color: #f7fbff
 # Refrences
 
 Tobias, J. A., Sheard, C., Pigot, A. L., M. Devenish, A. J., Yang, J., Sayol, F., C. Neate-Clegg, M. H., Alioravainen, N., Weeks, T. L., Barber, R. A., Walkden, P. A., A. MacGregor, H. E., I. Jones, S. E., Vincent, C., Phillips, A. G., Marples, N. M., Montaño-Centellas, F. A., Leandro-Silva, V., Claramunt, S., . . . Schleuning, M. (2022). AVONET: Morphological, ecological and geographical data for all birds. _Ecology Letters_, _25_(3), 581-597. https://doi.org/10.1111/ele.13898
+
+Polo, V., & Carrascal, L. M. (1999). Shaping the body mass distribution of Passeriformes: Habitat use and body mass are evolutionarily and ecologically related. Journal of Animal Ecology, 68(2), 324-337. https://besjournals.onlinelibrary.wiley.com/doi/10.1046/j.1365-2656.1999.00282.x 

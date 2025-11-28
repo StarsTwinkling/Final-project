@@ -4,7 +4,7 @@
     <title>How Bird Body Mass and Traits Shape Habitat Prefrences</title>
     <meta charset="utf-8" />
     <meta name="author" content="Tidybear123   Ishildur, Jason, Laith and Richard" />
-    <meta name="date" content="2025-11-27" />
+    <meta name="date" content="2025-11-28" />
     <script src="libs/header-attrs-2.29/header-attrs.js"></script>
     <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
   </head>
@@ -25,7 +25,7 @@ class: center, middle, inverse, title-slide
 ### University of Edinburgh
 ]
 .date[
-### 2025-11-27
+### 2025-11-28
 ]
 
 ---
@@ -59,10 +59,7 @@ color: #003049
 
 ]
 .pull-right[
-&lt;div class="figure" style="text-align: center"&gt;
-&lt;img src="img/Research.png" alt="Source: @Richad?" width="150%" /&gt;
-&lt;p class="caption"&gt;Source: @Richad?&lt;/p&gt;
-&lt;/div&gt;
+&lt;img src="img/Research.png" width="190%" style="display: block; margin: auto;" /&gt;
 ]
 ---
 background-color: #f7fbff
@@ -72,7 +69,7 @@ class: center, middle
 ---
 
 background-color: #f7fbff
-# Cleaning and techniques
+# Cleaning the data
 
 .pull-left[
  - AVONET data set: functional traits for all bird species.
@@ -175,7 +172,7 @@ background-color: #f7fbff
  - Similar mass range
 
 
-  - Higher frequency of some smaller birds compared with open habitats
+  - Dense habitat has two peaks, slightly more left
   
 
 
@@ -197,7 +194,13 @@ background-color: #f7fbff
 background-color: #f7fbff
 # Modelling: Are there other predictors than mass?
 
+.pull-left[
 
+- Used cross validation
+
+- Body mass alone not a strong enough predictor
+]
+.pull-right[
 &lt;table&gt;
  &lt;thead&gt;
   &lt;tr&gt;
@@ -209,22 +212,10 @@ background-color: #f7fbff
  &lt;/thead&gt;
 &lt;tbody&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; accuracy &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.523 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.006 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; Mass only &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
    &lt;td style="text-align:left;"&gt; roc_auc &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.523 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.008 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; Mass only &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; accuracy &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.644 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.004 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; All measurements &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;"&gt; roc_auc &lt;/td&gt;
@@ -234,7 +225,7 @@ background-color: #f7fbff
   &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-
+]
 ---
 background-color: #f7fbff
 # Final modelling
@@ -342,8 +333,8 @@ background-color: #f7fbff
 
 .pull-left[
 &lt;div class="figure" style="text-align: center"&gt;
-&lt;img src="img/Robin.webp" alt="Image credit: Photo by Jörg Angeli on Unsplash." width="55%" /&gt;
-&lt;p class="caption"&gt;Image credit: Photo by Jörg Angeli on Unsplash.&lt;/p&gt;
+&lt;img src="img/Robin.webp" alt="Image credit: Photo by Hans Rentsch on Green Feathers." width="55%" /&gt;
+&lt;p class="caption"&gt;Image credit: Photo by Hans Rentsch on Green Feathers.&lt;/p&gt;
 &lt;/div&gt;
 ]
 .pull-right[
@@ -369,6 +360,8 @@ background-color: #f7fbff
 # Refrences
 
 Tobias, J. A., Sheard, C., Pigot, A. L., M. Devenish, A. J., Yang, J., Sayol, F., C. Neate-Clegg, M. H., Alioravainen, N., Weeks, T. L., Barber, R. A., Walkden, P. A., A. MacGregor, H. E., I. Jones, S. E., Vincent, C., Phillips, A. G., Marples, N. M., Montaño-Centellas, F. A., Leandro-Silva, V., Claramunt, S., . . . Schleuning, M. (2022). AVONET: Morphological, ecological and geographical data for all birds. _Ecology Letters_, _25_(3), 581-597. https://doi.org/10.1111/ele.13898
+
+Polo, V., &amp; Carrascal, L. M. (1999). Shaping the body mass distribution of Passeriformes: Habitat use and body mass are evolutionarily and ecologically related. Journal of Animal Ecology, 68(2), 324-337. https://besjournals.onlinelibrary.wiley.com/doi/10.1046/j.1365-2656.1999.00282.x 
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
