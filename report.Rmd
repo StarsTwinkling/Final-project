@@ -17,14 +17,10 @@ library(tidyverse)
 library(tidymodels)
 library(palmerpenguins)
 library(knitr)
-library(xaringanthemer)
 library(readxl)
-library(janitor)
 library(tibble)
-library(gghighlight)
 library(devtools)
 library(readxl)
-library(janitor)
 library(broom)
 library(parsnip)
 library(rsample)
@@ -405,19 +401,13 @@ One limitation of our project is that the trait values in the data set are based
 In conclusion, our results differed from the journal we compared against, which reported that birds in dense habitats tend to be lighter than those in open habitats. This difference may be due to the scope of the data: the journal focused on 55 species in central Spain, while we analysed all Passeriformes species available in the AVONET dataset, along with the limitations of our study. In our analysis, we found no clear relationship between body mass and habitat density. However, some other traits—especially beak depth and beak width—showed stronger associations with habitat type. Future work could explore these traits further to better understand how they relate to habitat use.
 
 
-
+<br>
 
 
 ## References
 
-Tobias, J. A., Sheard, C., Pigot, A. L., M. Devenish, A. J., Yang, J., Sayol, F., C. Neate-Clegg, M. H., Alioravainen, N., Weeks, T. L., Barber, R. A., Walkden, P. A., A. MacGregor, H. E., I. Jones, S. E., Vincent, C., Phillips, A. G., Marples, N. M., Montaño-Centellas, F. A., Leandro-Silva, V., Claramunt, S., . . . Schleuning, M. (2022). AVONET: Morphological, ecological and geographical data for all birds. _Ecology Letters_, _25_(3), 581-597. https://doi.org/10.1111/ele.13898
+Tobias, J. A., Sheard, C., Pigot, A. L., M. Devenish, A. J., Yang, J., Sayol, F., C. Neate-Clegg, M. H., Alioravainen, N., Weeks, T. L., Barber, R. A., Walkden, P. A., A. MacGregor, H. E., I. Jones, S. E., Vincent, C., Phillips, A. G., Marples, N. M., Montaño-Centellas, F. A., Leandro-Silva, V., Claramunt, S., . . . Schleuning, M. (2022). ‘AVONET: morphological, ecological and geographical data for all birds’. Retrieved from: <https://figshare.com/s/b990722d72a26b5bfead>. (Accessed 30/11/2025)
 
-Tobias, J. A., Sheard, C., Pigot, A. L., M. Devenish, A. J., Yang, J., Sayol, F., C. Neate-Clegg, M. H., Alioravainen, N., Weeks, T. L., Barber, R. A., Walkden, P. A., A. MacGregor, H. E., I. Jones, S. E., Vincent, C., Phillips, A. G., Marples, N. M., Montaño-Centellas, F. A., Leandro-Silva, V., Claramunt, S., . . . Schleuning, M. (2022) AVONET. (2022). ‘AVONET: morphological, ecological and geographical data for all birds’. Available at: <https://figshare.com/s/b990722d72a26b5bfead>. Accessed: 9 November 2025
-
-Polo, V., & Carrascal, L. M. (1999). Shaping the body mass distribution of Passeriformes: Habitat use and body mass are evolutionarily and ecologically related. Journal of Animal Ecology, 68(2), 324-337. https://besjournals.onlinelibrary.wiley.com/doi/10.1046/j.1365-2656.1999.00282.x 
-
-Citation: 
-AVONET. (2022). ‘AVONET: morphological, ecological and geographical data for all birds’. Available at: <https://figshare.com/s/b990722d72a26b5bfead>. Accessed: 9 November 2025
-
+Polo, V., & Carrascal, L. M. (1999). Shaping the body mass distribution of Passeriformes: Habitat use and body mass are evolutionarily and ecologically related. Journal of Animal Ecology. Retrieved from: <https://besjournals.onlinelibrary.wiley.com/doi/10.1046/j.1365-2656.1999.00282.x>. (Accessed 30/11/2025)
 
 We used ChatGPT (v5) to help with debugging of the code, as well as improving clarity of our writing.
