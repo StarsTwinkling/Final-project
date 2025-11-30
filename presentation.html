@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="" xml:lang="">
   <head>
-    <title>How Bird Body Mass and Traits Shape Habitat Prefrences</title>
+    <title>How Bird’s Body Mass and Traits Shape Habitat Prefrences</title>
     <meta charset="utf-8" />
     <meta name="author" content="Tidybear123   Ishildur, Jason, Laith and Richard" />
-    <meta name="date" content="2025-11-28" />
+    <meta name="date" content="2025-11-30" />
     <script src="libs/header-attrs-2.29/header-attrs.js"></script>
     <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
   </head>
@@ -13,7 +13,7 @@
 class: center, middle, inverse, title-slide
 
 .title[
-# How Bird Body Mass and Traits Shape Habitat Prefrences
+# How Bird’s Body Mass and Traits Shape Habitat Prefrences
 ]
 .subtitle[
 ## Open vs. Dense Habitats, What is the Difference?
@@ -25,7 +25,7 @@ class: center, middle, inverse, title-slide
 ### University of Edinburgh
 ]
 .date[
-### 2025-11-28
+### 2025-11-30
 ]
 
 ---
@@ -44,6 +44,7 @@ class: center, middle, inverse, title-slide
 
 background-color: #f7fbff
 color: #003049
+
 # Background and Data
 
 .pull-left[
@@ -56,8 +57,8 @@ color: #003049
 
 - Does the AVONET data shows similar patterns?
 
-
 ]
+
 .pull-right[
 &lt;img src="img/Research.png" width="190%" style="display: block; margin: auto;" /&gt;
 ]
@@ -65,10 +66,11 @@ color: #003049
 background-color: #f7fbff
 class: center, middle
 
-## How does body mass in Passerformies vary between open and dense habitats, and to what extent do additional traits help explain habitat preference?
+## How does body mass in Passerformies vary between open and dense habitats, and to what extent do additional traits help explain preferences in habitat density?
 ---
 
 background-color: #f7fbff
+
 # Cleaning the data
 
 .pull-left[
@@ -88,6 +90,7 @@ background-color: #f7fbff
 
  
 ]
+
 .pull-right[
 
 ``` r
@@ -108,6 +111,7 @@ BirdLife &lt;- BirdLife_file %&gt;%
 
 ---
 background-color: #f7fbff
+
 # Exploratory Statistics
 
 .pull-left[
@@ -149,14 +153,6 @@ background-color: #f7fbff
 
 ---
 
-
-
-
-
-
-
-
-
 background-color: #f7fbff
 ## Distrubution of Body Mass
 
@@ -177,6 +173,7 @@ background-color: #f7fbff
 
  - Most outliers are part of Corvidae (crow family)
 ]
+
 .pull-right[
 &lt;img src="presentation_files/figure-html/histogram-1.png" width="75%" /&gt;
 
@@ -185,6 +182,7 @@ background-color: #f7fbff
 
 ---
 background-color: #f7fbff
+
 # Modelling: Are there other predictors than mass?
 
 .pull-left[
@@ -221,6 +219,7 @@ background-color: #f7fbff
 ]
 ---
 background-color: #f7fbff
+
 # Final modelling
 
 .pull-left[
@@ -230,6 +229,8 @@ background-color: #f7fbff
    &lt;th style="text-align:left;"&gt; Term &lt;/th&gt;
    &lt;th style="text-align:right;"&gt; Estimate &lt;/th&gt;
    &lt;th style="text-align:right;"&gt; Std_Error &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; statistic &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; p.value &lt;/th&gt;
   &lt;/tr&gt;
  &lt;/thead&gt;
 &lt;tbody&gt;
@@ -237,55 +238,76 @@ background-color: #f7fbff
    &lt;td style="text-align:left;"&gt; (Intercept) &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.195 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.162 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.200 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.23 &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;"&gt; Mass &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; -0.008 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.002 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -5.459 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.00 &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;"&gt; Wing.Length &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; -0.024 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.005 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -4.987 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.00 &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;"&gt; Beak.Length_Culmen &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; -0.188 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.020 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -9.428 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.00 &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;"&gt; Beak.Length_Nares &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.165 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.023 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 7.088 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.00 &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;"&gt; Beak.Width &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; -0.295 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.038 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -7.824 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.00 &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;"&gt; Beak.Depth &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.279 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.030 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9.193 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.00 &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;"&gt; Tarsus.Length &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.052 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.008 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 6.273 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.00 &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;"&gt; Kipps.Distance &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.088 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.007 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 12.285 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.00 &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;"&gt; Tail.Length &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.014 &lt;/td&gt;
    &lt;td style="text-align:right;"&gt; 0.002 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8.149 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.00 &lt;/td&gt;
   &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
 ]
+
 .pull-right[
 &lt;img src="presentation_files/figure-html/ROC-curve-1.png" width="135%" /&gt;
 ]
@@ -293,6 +315,7 @@ background-color: #f7fbff
 
 ---
 background-color: #f7fbff
+
 # Limitations / Summary
 
 .pull-left[
@@ -323,9 +346,9 @@ Conlcusion:
 background-color: #f7fbff
 # Refrences
 
-Tobias, J. A., Sheard, C., Pigot, A. L., M. Devenish, A. J., Yang, J., Sayol, F., C. Neate-Clegg, M. H., Alioravainen, N., Weeks, T. L., Barber, R. A., Walkden, P. A., A. MacGregor, H. E., I. Jones, S. E., Vincent, C., Phillips, A. G., Marples, N. M., Montaño-Centellas, F. A., Leandro-Silva, V., Claramunt, S., . . . Schleuning, M. (2022). AVONET: Morphological, ecological and geographical data for all birds. _Ecology Letters_, _25_(3), 581-597. https://doi.org/10.1111/ele.13898
+Tobias, J. A., Sheard, C., Pigot, A. L., M. Devenish, A. J., Yang, J., Sayol, F., C. Neate-Clegg, M. H., Alioravainen, N., Weeks, T. L., Barber, R. A., Walkden, P. A., A. MacGregor, H. E., I. Jones, S. E., Vincent, C., Phillips, A. G., Marples, N. M., Montaño-Centellas, F. A., Leandro-Silva, V., Claramunt, S., . . . Schleuning, M. (2022). ‘AVONET: morphological, ecological and geographical data for all birds’. Retrieved from: &lt;https://figshare.com/s/b990722d72a26b5bfead&gt;. (Accessed 28/11/2025)
 
-Polo, V., &amp; Carrascal, L. M. (1999). Shaping the body mass distribution of Passeriformes: Habitat use and body mass are evolutionarily and ecologically related. Journal of Animal Ecology, 68(2), 324-337. https://besjournals.onlinelibrary.wiley.com/doi/10.1046/j.1365-2656.1999.00282.x 
+Polo, V., &amp; Carrascal, L. M. (1999). Shaping the body mass distribution of Passeriformes: Habitat use and body mass are evolutionarily and ecologically related. Journal of Animal Ecology. Retrieved from: &lt;https://besjournals.onlinelibrary.wiley.com/doi/10.1046/j.1365-2656.1999.00282.x&gt;. (Accessed 28/11/2025)
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

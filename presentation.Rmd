@@ -1,5 +1,5 @@
 ---
-title: "How Bird Body Mass and Traits Shape Habitat Prefrences"
+title: "How Bird's Body Mass and Traits Shape Habitat Prefrences"
 subtitle: "Open vs. Dense Habitats, What is the Difference?"
 author: "Tidybear123 <br> Ishildur, Jason, Laith and Richard"
 institute: "University of Edinburgh"
@@ -18,21 +18,16 @@ output:
 ---
 
 ```{r install-package, include = FALSE, eval = FALSE}
-# Copy and paste the following code into your console to download and install
-# the `xaringan` package that contains all of the code which allows you 
-# to create presentation slides in Rmarkdown
 install.packages('xaringan')
 ```
 
 
 ```{r load-packages, include = FALSE}
-# Add any additional packages you need to this chunk
 library(tidyverse)
 library(tidymodels)
 library(palmerpenguins)
 library(knitr)
 library(xaringanthemer)
-
 library(readxl)
 library(janitor)
 library(broom)
@@ -67,6 +62,7 @@ style_xaringan(
 
 background-color: #f7fbff
 color: #003049
+
 # Background and Data
 
 .pull-left[
@@ -79,8 +75,8 @@ color: #003049
 
 - Does the AVONET data shows similar patterns?
 
-
 ]
+
 .pull-right[
 ```{r Passeriformes1, echo = FALSE, out.width = "190%", fig.align = "center"}
 include_graphics("img/Research.png")
@@ -90,10 +86,11 @@ include_graphics("img/Research.png")
 background-color: #f7fbff
 class: center, middle
 
-## How does body mass in Passerformies vary between open and dense habitats, and to what extent do additional traits help explain habitat preference?
+## How does body mass in Passerformies vary between open and dense habitats, and to what extent do additional traits help explain preferences in habitat density?
 ---
 
 background-color: #f7fbff
+
 # Cleaning the data
 
 .pull-left[
@@ -113,6 +110,7 @@ background-color: #f7fbff
 
  
 ]
+
 .pull-right[
 ```{r cleaning}
 # Cleaning
@@ -132,6 +130,7 @@ BirdLife <- BirdLife_file %>%
 
 ---
 background-color: #f7fbff
+
 # Exploratory Statistics
 
 .pull-left[
@@ -158,12 +157,6 @@ kable(Summary_table, digits = 3, format = "html")
 
 ---
 
-
-
-
-
-
-
 background-color: #f7fbff
 ## Distrubution of Body Mass
 
@@ -184,6 +177,7 @@ background-color: #f7fbff
 
  - Most outliers are part of Corvidae (crow family)
 ]
+
 .pull-right[
 ```{r histogram, echo = FALSE, out.width = "75%"}
 ggplot(BirdLife, aes(x = Mass, fill = Habitat.Density)) +
@@ -196,7 +190,6 @@ ggplot(BirdLife, aes(x = Mass, fill = Habitat.Density)) +
   theme_minimal() +
   theme(legend.position = "none")
 
-# theme options: https://ggplot2.tidyverse.org/reference/ggtheme.html
 ```
 
 ```{r warning=FALSE, out.width="75%", fig.width=4, echo=FALSE}
@@ -216,6 +209,7 @@ ggplot(BirdLife, aes(y = Mass, x = Habitat.Density, color = Habitat.Density)) +
 
 ---
 background-color: #f7fbff
+
 # Modelling: Are there other predictors than mass?
 
 .pull-left[
@@ -297,6 +291,7 @@ kable(comperison_table, digits = 3, format = "html")
 ]
 ---
 background-color: #f7fbff
+
 # Final modelling
 
 .pull-left[
@@ -312,6 +307,7 @@ kable(fit_table, digits = 3, format = "html")
 
 ```
 ]
+
 .pull-right[
 ```{r ROC-curve, echo = FALSE, out.width = "135%"}
 final_fit <- wflow_multi %>%
@@ -341,6 +337,7 @@ train_pred %>%
 ```
 ---
 background-color: #f7fbff
+
 # Limitations / Summary
 
 .pull-left[
@@ -370,6 +367,6 @@ Conlcusion:
 background-color: #f7fbff
 # Refrences
 
-Tobias, J. A., Sheard, C., Pigot, A. L., M. Devenish, A. J., Yang, J., Sayol, F., C. Neate-Clegg, M. H., Alioravainen, N., Weeks, T. L., Barber, R. A., Walkden, P. A., A. MacGregor, H. E., I. Jones, S. E., Vincent, C., Phillips, A. G., Marples, N. M., Montaño-Centellas, F. A., Leandro-Silva, V., Claramunt, S., . . . Schleuning, M. (2022). AVONET: Morphological, ecological and geographical data for all birds. _Ecology Letters_, _25_(3), 581-597. https://doi.org/10.1111/ele.13898
+Tobias, J. A., Sheard, C., Pigot, A. L., M. Devenish, A. J., Yang, J., Sayol, F., C. Neate-Clegg, M. H., Alioravainen, N., Weeks, T. L., Barber, R. A., Walkden, P. A., A. MacGregor, H. E., I. Jones, S. E., Vincent, C., Phillips, A. G., Marples, N. M., Montaño-Centellas, F. A., Leandro-Silva, V., Claramunt, S., . . . Schleuning, M. (2022). ‘AVONET: morphological, ecological and geographical data for all birds’. Retrieved from: <https://figshare.com/s/b990722d72a26b5bfead>. (Accessed 28/11/2025)
 
-Polo, V., & Carrascal, L. M. (1999). Shaping the body mass distribution of Passeriformes: Habitat use and body mass are evolutionarily and ecologically related. Journal of Animal Ecology, 68(2), 324-337. https://besjournals.onlinelibrary.wiley.com/doi/10.1046/j.1365-2656.1999.00282.x 
+Polo, V., & Carrascal, L. M. (1999). Shaping the body mass distribution of Passeriformes: Habitat use and body mass are evolutionarily and ecologically related. Journal of Animal Ecology. Retrieved from: <https://besjournals.onlinelibrary.wiley.com/doi/10.1046/j.1365-2656.1999.00282.x>. (Accessed 28/11/2025)

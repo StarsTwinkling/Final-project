@@ -16,28 +16,14 @@ This is a template repository for your group project. One of your group members 
 (Optional) Use the space below to structure your group project and to distribute tasks amongst members. It is not expected that every member makes a contribution to each component of the investigation, but you should aim to share the work fairly that utilises each other's strengths (eg. coding, analysis, report writing, etc.)
 
 - Data
-  - [x] Task 1a
-  - [ ] Task 1b 
+  - [x] Background Research
+  - [x] Cleaning
 - Summarise
-  - [ ] Task 2a
-  - [ ] Task 2b
+  - [x] Summary Statistic
 - Visualisation
-  - [ ] Task 3a
-  - [ ] Task 3b
-- Ect.
+  - [x] Box plot
+  - [x] Histogram
+- Modelling
 
-# Check-in
 
-There will be two check-in points where you will have a discussion with a tutor on what you have done so far and what you plan to investigate. To help make this meeting run smoothly, it is recommended that you use the space below to bullet point your key findings and your plans. You can also add here any feedback and suggestions you receive from your tutor for you to refer back to in the future.
 
-## Check-in 1 (week 6)
-
-- item 1
-- item 2
-- etc.
-
-## Check-in 2 (week 10)
-
-- item 1
-- item 2
-- etc.
