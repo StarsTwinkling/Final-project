@@ -82,6 +82,11 @@ table <- tribble(
   "Beak.Width", "Continous", "The average width of the beak recorded in mm within each species",
   "Mass", "Continous", "The average width of the beak recorded in mm within each species"
 )
+#USE this to show every data's meaning
+AVONET1_Birdlife <- read_excel("data/AVONET1_Birdlife.xlsx")
+AVONET1_Birdlife <- AVONET1_Birdlife %>% select(-last_col())
+print(AVONET1_Birdlife)
+
 knitr::kable(table)
 ```
 
@@ -91,7 +96,7 @@ During our cleaning process we found that to get the sample sizes of dense and o
 
 ## Initial Exploration
 
-First we were curios to see which type of habitats were most common in each group of dense and open habitats.
+First we were curious to see which type of habitats were most common in each group of dense and open habitats.
 
 ```{r Habitat Type and Density}
 BirdLife %>%
@@ -123,7 +128,7 @@ Summary_table <- BirdLife %>%
   group_by(Habitat.Density) %>%
   summarise(Mean = mean(Mass), 
             Median = median(Mass), 
-            SD = sd(Mass), 
+            Standard_Deviation = sd(Mass), 
             Total = n_distinct(Species1))
 
 kable(Summary_table, digits = 2, format = "html") %>%
@@ -149,12 +154,32 @@ top10_outliers <- BirdLife %>%
     names_from = Habitat.Density,
     values_from = c(Family1, Mass)
   )
+# SPLIT DATA
+dense_data <- top10_outliers %>%
+  select(rank, Family1_Dense, Mass_Dense) %>%
+  rename(Family = Family1_Dense, Mass = Mass_Dense) %>%
+  mutate(Habitat = "Dense")
 
-kable(top10_outliers, digits = 3, format = "html") %>%
-   kable_styling(full_width = FALSE)
+open_data <- top10_outliers %>%
+  select(rank, Family1_Open, Mass_Open) %>%
+  rename(Family = Family1_Open, Mass = Mass_Open) %>%
+  mutate(Habitat = "Open")
 
+# DENSE
+kable(dense_data, format = "html", digits = 3,
+      col.names = c("Rank", "Family", "Mass (g)", "Habitat")) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), 
+                full_width = FALSE,
+                font_size = 12) %>%
+  row_spec(0, bold = TRUE, background = "#2c3e50", color = "white")
 
-
+# OPEN
+kable(open_data, format = "html", digits = 3,
+      col.names = c("Rank", "Family", "Mass (g)", "Habitat")) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), 
+                full_width = FALSE,
+                font_size = 12) %>%
+  row_spec(0, bold = TRUE, background = "#e67e22", color = "white")
 ```
 
 
@@ -371,13 +396,13 @@ train_pred %>%
                     "Dense Habitat", 
                     "Open Habitat"),
     Dense_pred = if_else(.pred_Dense > cutoff_prob, 
-                         "Habitat labeled Dense", 
-                         "Habitat labeled Open")) %>%
+                         "Labelled Dense", 
+                         "Labelled Open")) %>%
   count(Dense, Dense_pred) %>%                  
   pivot_wider(names_from = Dense, 
               values_from = n) %>%
-  kable(col.names = c("", "Habitat is Dense", 
-                      "Habitat is Open"))
+  kable(col.names = c("", "Is Dense", 
+                      "Is Open"))
 ```
               
 Sensitivity = 571/(255+571) = 0.69
