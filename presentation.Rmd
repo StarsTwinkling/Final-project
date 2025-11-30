@@ -153,13 +153,6 @@ Summary_table <- BirdLife %>%
 
 kable(Summary_table, digits = 3, format = "html")
 
-#BirdLife %>%
-  #group_by(Habitat.Density, outlier = Mass > 150) %>%
-  #summarise(n = n())
-
-#BirdLife %>%
-  #group_by(Habitat.Density, crow = Family1 == "Corvidae") %>%
-  #summarise(n = n())
 ```
 ]
 
@@ -169,22 +162,6 @@ kable(Summary_table, digits = 3, format = "html")
 
 
 
-
-```{r recode-species, echo = FALSE}
-# In this chunk I'm doing a bunch of analysis that I don't want to present 
-bird_long <- BirdLife %>%
-  pivot_longer(
-    cols = c(Mass),
-    names_to = "Trait",
-    values_to = "Value"
-  ) #%>%
-  #mutate(
-   # Value_plot = if_else(Trait == "Mass", log10(Value), Value)
-  #)
-# in my slides. But I need the resulting data frame for a plot I want to present.
-iris_modified <- iris %>%
-  mutate(Species = fct_other(Species, keep = "setosa"))
-```
 
 
 background-color: #f7fbff
@@ -223,14 +200,11 @@ ggplot(BirdLife, aes(x = Mass, fill = Habitat.Density)) +
 ```
 
 ```{r warning=FALSE, out.width="75%", fig.width=4, echo=FALSE}
-# see how I changed out.width and fig.width from defaults
-# to make the figure bigger
-ggplot(bird_long, aes(x = Trait, y = Value, color = Habitat.Density)) +
+ggplot(BirdLife, aes(y = Mass, x = Habitat.Density, color = Habitat.Density)) +
   geom_boxplot(fill = NA, width = 0.6, outlier.shape = 1) +  
-  facet_wrap(~ Habitat.Density) + 
   scale_y_log10() +   
   labs(title = "Mass by Habitat Density",
-       x = "Trait",
+       x = "Type of Habitat",
        y = "Value (log10 scale)") +
   theme_minimal() +
   theme(
@@ -329,7 +303,6 @@ background-color: #f7fbff
 ```{r Fitted model w multiple varibles, echo = FALSE}
 
 fit_table <- tidy(fit_multi) %>%
-  select(term, estimate,  std.error) %>%
   rename(
     Term = term,
     Estimate = estimate,

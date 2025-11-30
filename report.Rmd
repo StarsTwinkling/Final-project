@@ -14,103 +14,204 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ```{r load-lib, include = FALSE}
 library(tidyverse)
+library(tidymodels)
+library(palmerpenguins)
+library(knitr)
+library(xaringanthemer)
 library(readxl)
 library(janitor)
 library(tibble)
 library(gghighlight)
+library(devtools)
+library(readxl)
+library(janitor)
+library(broom)
+library(parsnip)
+library(rsample)
+library(tune)
+library(recipes)
+library(workflows)
+library(ranger)
+library(yardstick)
+library(ggridges)
 
 ```
 
 ```{r load-data, include=FALSE}
-# load your data here and any pre-processing/cleaning 
-#  that you need for your report.
+#Loading data
+
+BirdLife_file <- read.csv("data/AVONET1_BirdLife.csv")
+
+# Cleaning
+
+BirdLife <- BirdLife_file %>%
+  filter(Order1 == "Passeriformes", 
+         !is.na(Habitat.Density),
+         !is.na(Habitat))%>%
+  mutate(
+    Habitat.Density = case_when(
+      Habitat.Density == 1 ~ "Dense",
+      Habitat.Density == 2 | 3 ~ "Open",
+    ),
+    Habitat.Density = fct_relevel(Habitat.Density, "Dense", "Open")
+  )
 
 
 ```
 
-## Research Question
+## Introduction
 
-the research we mainly want to focus on are the effect that the mass has on the wing length of a specie of bird and whether this has an impact on the density of the habitat that the birds live in, usually birds tend to evolve themselves to become lighter, so it's easier and takes less effort to fly, but for various reasons some birds are heavier, and we want to know whether these birds would have to compensate for this by making their wings stronger and larger and how this increased wing size would affect the area they need for living.
+Bird habitats influence how birds move, forage, and fly, which can lead to differences in their physical traits. We wanted to explore whether habitat type affects key characteristics, with a particular focus on body mass. We found a paper that suggest that there is a link between body mass and habitat structure, especially when comparing dense and open environments. This motivated us to test whether the AVONET data set shows similar patterns. Our study focuses on Passeriformes, the largest and most diverse bird order, representing around 60% of all bird species. Based on this, we asked: 
+What is the relationship between body mass and open vs. dense habitats in Passeriformes, and do other traits help explain where a species lives?
 
 ## Data Overview
 
-for this project, we will be using the data set AVONET: morphological, ecological and geographical data for all birds, this database includes data about 90000 birds from across 11009 species of birds from all across the world, the data set includes data such as beak length, tail length, habitat and many more, for our project, we will be mainly looking at three variables, namely habitat density, mass and wing length
+For this project, we will be using the data set AVONET: morphological, ecological and geographical data for all birds. Each observation is a species of bird, containing information about its functional traits including ecological variables, continuous morphological traits, and information on range size and location. We chose to focus on Habitat, Habitat density, Mass and some other body measurements.
+
+During our cleaning process we found that to get the sample sizes of dense and open habitats approximately equal we had to combine semi-open (2) and open (3) habitats to one value called "Open".
 
 ```{r}
 
 table <- tribble(
   ~Variable,   ~Type,  ~Description,
-  "Habitat.Density", "Numeric", "A number representing the density of the habitat with 1 being more dense and 3 being more open",
-  "Mass", "Numeric", "The average mass of the recorded birds in grams",
-  "Wing.Length", "Numeric", "The average wing lengrh of the recorded birds in centimeters"
+  "Habitat.Density", "Discrete", "A number representing the density of the habitat with 1 being more dense and 3 being more open",
+  "Mass", "Continous", "The average mass of the recorded birds in grams",
+  "Habitat", "Categorical", "The average wing length of the recorded birds in centimeters"
 )
 knitr::kable(table)
 ```
 
-we also created a variable called habitat density type to aid us in the research, because we felt that the details for habitat density were unnecessary for our project while we just want to see the effect of dense vs open habitats
-
-```{r}
-
-table2 <- tribble(
-  ~Variable,   ~Type,  ~Description,
-  "Habitat.Density.Type", "Character", "the habitat is considered open if the habitat density is 2 or 3, and considered dense if the habitat density is 1",
-)
-knitr::kable(table2)
-```
 
 Citation: 
 AVONET. (2022). ‘AVONET: morphological, ecological and geographical data for all birds’. Available at: <https://figshare.com/s/b990722d72a26b5bfead>. Accessed: 9 November 2025
 
-## Findings
+## Exploratory Statistics
 
-### Wing Length against Mass
+We started by calculating the mean, median and standard deviation within each group. There we found that both the median and mean were smaller in Open Habitat. The 
 
-we first plotted a graph of the mass of birds against their wing length in an attempt to find any sort of pattern or trend, after we did this we realized something strange, some of the outliers in the data seems too extreme, while the majority of birds have mass below 11000, there are ten species with mass ranging from 23000 to 111000
+```{r, echo = FALSE}
+#Summary statistics
+Summary_table <- BirdLife %>%
+  group_by(Habitat.Density) %>%
+  summarise(Mean = mean(Mass), Median = median(Mass), SD = sd(Mass), Total = n_distinct(Species1))
 
-```{r}
-BirdLife <- read.csv("data/AVONET1_BirdLife.csv")
-BirdLife %>%
-  select(Mass,Wing.Length,Species1) %>%
-  ggplot(aes(y = Wing.Length, x = Mass)) +
-  geom_jitter() +
-  labs(
-    title = "bird mass against wing length",
-    y = "wing length in cm",
-    x = "mass in gram"
+kable(Summary_table, digits = 3, format = "html")
+
+```
+
+## Body Mass Distrubution
+
+
+
+```{r warning=FALSE, out.width="75%", fig.width=4, echo=FALSE}
+ggplot(BirdLife, aes(y = Mass, x = Habitat.Density, color = Habitat.Density)) +
+  geom_boxplot(fill = NA, width = 0.6, outlier.shape = 1) +  
+  scale_y_log10() +   
+  labs(title = "Mass by Habitat Density",
+       x = "Type of Habitat",
+       y = "Value (log10 scale)") +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(face = "bold"),
+    legend.position = "none",
   )
 ```
 
-this made the graph slightly harder to see and made us wonder as to why that might be the case, after some searching we found out that the ten outliers are mainly ostrich, cassowary, emus, penguins and rhea, all of them flightless
+
 
 ```{r}
 BirdLife %>%
-  select(Mass,Wing.Length,Species1) %>%
-  ggplot(aes(y = Wing.Length, x = Mass)) +
-  geom_jitter() +
-  gghighlight(Mass > 15000, label_key = Species1) +
+  ggplot(aes(y = Habitat), fill = Habitat) +
+  geom_bar() +
+  facet_wrap(~Habitat.Density) +
   labs(
-    title = "bird mass against wing length",
-    y = "wing length in cm",
-    x = "mass in gram"
+    title = "Amount of Habitat Type in each Species",
+    y = "Type of Habitat",
+    x = "Number of species"
   )
 ```
 
-### Wing Length against Mass for birds under 15000 grams
 
-since we are mainly looking at the effect that wing length have at the mass of the birds we decided that they won't matter as much since their weight are supported by their leg and being on ground rather than having stronger wings like the other birds, so we removed these outliers from our graph
 
-```{r}
-BirdLife %>%
-  filter(Mass < 15000) %>%
-  select(Mass,Wing.Length) %>%
-  ggplot(aes(y = Wing.Length, x = Mass)) +
-  geom_point() +
-  labs(
-    title = "bird mass against wing length",
-    y = "wing length in cm",
-    x = "mass in gram"
+### Predictive Modelling
+
+```{r model building, echo = FALSE}
+
+set.seed(222)
+BirdLife_split <- initial_split(BirdLife)
+
+train_data <- training(BirdLife_split)
+test_data <- testing(BirdLife_split)
+
+folds <- vfold_cv(train_data, v = 10)
+  
+rec_mass <- recipe(
+  Habitat.Density ~ Mass,
+  data = train_data
+) %>%
+  step_zv(all_predictors())
+
+mod_glm <- logistic_reg() %>%
+  set_engine("glm")
+
+wflow_mass <- workflow() %>%
+  add_model(mod_glm) %>%
+  add_recipe(rec_mass)
+
+cv_mass <- fit_resamples(
+  wflow_mass,
+  resamples = folds,
+  metrics = metric_set(roc_auc),
+  control = control_resamples(save_pred = TRUE)
+)
+
+
+rec_multi <- recipe(
+  Habitat.Density ~ Mass + Wing.Length + Beak.Length_Culmen + Beak.Length_Nares
++ Beak.Width + Beak.Depth + Tarsus.Length + Wing.Length + Kipps.Distance + Tail.Length,
+  data = train_data
+) %>%
+  step_zv(all_predictors())
+
+wflow_multi <- workflow() %>%
+  add_model(mod_glm) %>%
+  add_recipe(rec_multi)
+
+fit_multi <- wflow_multi %>%
+  fit(data = train_data)
+
+cv_multi <- fit_resamples(
+  wflow_multi,
+  resamples = folds,
+  metrics = metric_set(roc_auc),
+  control = control_resamples(save_pred = TRUE))
+
+
+comperasion <- bind_rows(
+  collect_metrics(cv_mass)  %>% mutate(model = "Mass only"),
+  collect_metrics(cv_multi) %>% mutate(model = "All measurements")
+) 
+
+comperison_table <- comperasion %>%
+  select(.metric, mean, std_err, model) %>%
+  rename(
+    Metric = .metric,
+    Mean = mean,
+    Std_Error = std_err,
+    Model = model
   )
+
+kable(comperison_table, digits = 3, format = "html")
+
+
 ```
+
+## Limitations
+
+
+
+## Summary
+
 
 
 # the instructions
@@ -139,5 +240,8 @@ Make sure to hide your code with `echo = FALSE` unless the point you are trying 
 
 ## References
 
-List any references here.
-You should, at a minimum, list your data source.
+Tobias, J. A., Sheard, C., Pigot, A. L., M. Devenish, A. J., Yang, J., Sayol, F., C. Neate-Clegg, M. H., Alioravainen, N., Weeks, T. L., Barber, R. A., Walkden, P. A., A. MacGregor, H. E., I. Jones, S. E., Vincent, C., Phillips, A. G., Marples, N. M., Montaño-Centellas, F. A., Leandro-Silva, V., Claramunt, S., . . . Schleuning, M. (2022). AVONET: Morphological, ecological and geographical data for all birds. _Ecology Letters_, _25_(3), 581-597. https://doi.org/10.1111/ele.13898
+
+Polo, V., & Carrascal, L. M. (1999). Shaping the body mass distribution of Passeriformes: Habitat use and body mass are evolutionarily and ecologically related. Journal of Animal Ecology, 68(2), 324-337. https://besjournals.onlinelibrary.wiley.com/doi/10.1046/j.1365-2656.1999.00282.x 
+
+Open AI
