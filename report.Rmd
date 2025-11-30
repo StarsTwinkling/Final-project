@@ -1,5 +1,5 @@
 ---
-title: "The effect of habitat density on wing length and mass of different species of birds"
+title: "How Bird's Body Mass and Traits Shape Habitat Prefrences"
 author: "by Tidybear123: Ishildur, Laith, Jason, & Richard"
 date: "`r Sys.Date()`"
 output: html_document
@@ -34,6 +34,7 @@ library(workflows)
 library(ranger)
 library(yardstick)
 library(ggridges)
+library(kableExtra)
 
 ```
 
@@ -59,51 +60,122 @@ BirdLife <- BirdLife_file %>%
 
 ```
 
+<br>
+
 ## Introduction
 
-Bird habitats influence how birds move, forage, and fly, which can lead to differences in their physical traits. We wanted to explore whether habitat type affects key characteristics, with a particular focus on body mass. We found a paper that suggest that there is a link between body mass and habitat structure, especially when comparing dense and open environments. This motivated us to test whether the AVONET data set shows similar patterns. Our study focuses on Passeriformes, the largest and most diverse bird order, representing around 60% of all bird species. Based on this, we asked: 
-What is the relationship between body mass and open vs. dense habitats in Passeriformes, and do other traits help explain where a species lives?
+Bird habitats influence how birds move, forage, and fly, which can lead to differences in their physical traits. We wanted to explore whether habitat type affects key characteristics, with a particular focus on body mass. We found a paper that suggest that there is a link between body mass and habitat structure within Passeriformes, in particular when comparing dense and open habitats. This motivated us to test whether the AVONET data set shows similar patterns. Our study focuses on Passeriformes, the largest and most diverse bird order, representing around 60% of all bird species. Based on this, we asked: 
+<br>
+###What is the relationship between body mass and open vs. dense habitats in Passeriformes, and do other traits help explain habitat density?
+
+<br>
+
 
 ## Data Overview
 
-For this project, we will be using the data set AVONET: morphological, ecological and geographical data for all birds. Each observation is a species of bird, containing information about its functional traits including ecological variables, continuous morphological traits, and information on range size and location. We chose to focus on Habitat, Habitat density, Mass and some other body measurements.
+For this rerport, we will be using the data set AVONET: morphological, ecological and geographical data for all birds. Each row is a species, containing information about its functional traits including ecological variables, continuous morphological traits, and information on range size and location. We chose to focus on Habitat, Habitat density, Mass and some other body measurements.
 
-During our cleaning process we found that to get the sample sizes of dense and open habitats approximately equal we had to combine semi-open (2) and open (3) habitats to one value called "Open".
-
-```{r}
+```{r Data descriptions}
 
 table <- tribble(
   ~Variable,   ~Type,  ~Description,
-  "Habitat.Density", "Discrete", "A number representing the density of the habitat with 1 being more dense and 3 being more open",
-  "Mass", "Continous", "The average mass of the recorded birds in grams",
-  "Habitat", "Categorical", "The average wing length of the recorded birds in centimeters"
+  "Habitat.Density", "Discrete", "1 = Dense habitats, 2 = Semi-open habitats and 3 = Open habitats",
+  "Habitat", "Categorical", "Type of habitat the species predominatly lives in",
+  "Family1", "Categorical", "Which family the species belongs to",
+  "Mass", "Continous", "The average mass of the species recorded in grams",
+  "Beak.Width", "Continous", "The average width of the beak recorded in mm within each species",
+  "Mass", "Continous", "The average width of the beak recorded in mm within each species"
 )
 knitr::kable(table)
 ```
 
+During our cleaning process we found that to get the sample sizes of dense and open habitats approximately equal we had to combine semi-open (2) and open (3) habitats to one value called "Open".
 
-Citation: 
-AVONET. (2022). ‘AVONET: morphological, ecological and geographical data for all birds’. Available at: <https://figshare.com/s/b990722d72a26b5bfead>. Accessed: 9 November 2025
+<br>
+
+## Initial Exploration
+
+First we were curios to see which type of habitats were most common in each group of dense and open habitats.
+
+```{r Habitat Type and Density}
+BirdLife %>%
+  ggplot(aes(y = Habitat, fill = Habitat)) +
+  geom_bar() +
+  facet_wrap(~Habitat.Density) +
+  labs(
+    title = "Amount of each Habitat Type in each Species",
+    y = "Type of Habitat",
+    x = "Number of species"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+<br>
+
+We found that Forest were most common within dense habitats, and open habitats being wider spread but with the majority belonging to shrubland, forest and woodland habitats. Beacause of the strong correalation between forest and dense habitats, we decided not to include habitat as a exploratory variable in our modelling.
+
+<br>
 
 ## Exploratory Statistics
 
-We started by calculating the mean, median and standard deviation within each group. There we found that both the median and mean were smaller in Open Habitat. The 
+We started by calculating the mean, median and standard deviation within each group. There we found that both the median and mean were smaller in Open Habitat, indicating that species in open habitat are on average, as well as the most typical value is smaller than species in dense habitats. Furthermore, the standard deviation seems to lie between 54 g and 58 g, indicating some spread in the data, with open habitat having the largest spread.
 
-```{r, echo = FALSE}
+
+```{r Summary statistics, echo = FALSE}
 #Summary statistics
 Summary_table <- BirdLife %>%
   group_by(Habitat.Density) %>%
-  summarise(Mean = mean(Mass), Median = median(Mass), SD = sd(Mass), Total = n_distinct(Species1))
+  summarise(Mean = mean(Mass), 
+            Median = median(Mass), 
+            SD = sd(Mass), 
+            Total = n_distinct(Species1))
 
-kable(Summary_table, digits = 3, format = "html")
+kable(Summary_table, digits = 2, format = "html") %>%
+  kable_styling(full_width = FALSE)
 
 ```
 
+<br>
+
+#### Outliers
+
+When examaning the outliers, we found that most of them belong to the crow family (Corvidae). However, because they represent a small proportion of the total data set and their large body size is biologically meaningful rather than an error, they do not meaningfully affect the overall patterns we observe.
+
+```{r outliers}
+
+top10_outliers <- BirdLife %>%
+  group_by(Habitat.Density) %>%
+  arrange(desc(Mass), .by_group = TRUE) %>%
+  slice_head(n = 10) %>%
+  mutate(rank = row_number()) %>%
+  select(rank, Habitat.Density, Family1, Mass) %>%
+  pivot_wider(
+    names_from = Habitat.Density,
+    values_from = c(Family1, Mass)
+  )
+
+kable(top10_outliers, digits = 3, format = "html") %>%
+   kable_styling(full_width = FALSE)
+
+
+
+```
+
+
+<br>
+
+
 ## Body Mass Distrubution
 
+When looking at the distribution of body mass we used the log scale to spread the small values and compresses the large ones, reducing skewness while keeping relative differences intact.
 
+<br>
 
-```{r warning=FALSE, out.width="75%", fig.width=4, echo=FALSE}
+### Distubution of Body Mass as Box Plots
+
+Looking deeper into the distribution of body mass we made a box plot and histogram. The box plot shows us that the interquartile range of species in open habitats are slightly smaller compered to dense habitats. Indicating that Open birds has a smaller spread in the middle 50%.
+
+```{r Box plot, echo=FALSE}
 ggplot(BirdLife, aes(y = Mass, x = Habitat.Density, color = Habitat.Density)) +
   geom_boxplot(fill = NA, width = 0.6, outlier.shape = 1) +  
   scale_y_log10() +   
@@ -116,43 +188,67 @@ ggplot(BirdLife, aes(y = Mass, x = Habitat.Density, color = Habitat.Density)) +
     legend.position = "none",
   )
 ```
+<br>
 
+### Distubution of Body Mass as Histogram
 
+```{r histogram, echo = FALSE}
+ggplot(BirdLife, aes(x = Mass, fill = Habitat.Density)) +
+  geom_histogram(bins = 100) +
+  scale_x_log10() +
+ facet_wrap(~ Habitat.Density) + 
+  labs(title = "Mass Distribution by Habitat Density (log scale)",
+       x = "Mass (log10 g)",
+       y = "Count") +
+  theme_minimal() +
+  theme(legend.position = "none")
 
-```{r}
-BirdLife %>%
-  ggplot(aes(y = Habitat), fill = Habitat) +
-  geom_bar() +
-  facet_wrap(~Habitat.Density) +
-  labs(
-    title = "Amount of Habitat Type in each Species",
-    y = "Type of Habitat",
-    x = "Number of species"
-  )
 ```
 
+The histograms for both habitat types show a left-skewed distribution. The dense habitat group also suggests a hint of two peaks, but overall both groups follow a similar pattern.
+
+<br>
+<br>
 
 
-### Predictive Modelling
+## Predictive Modelling
 
-```{r model building, echo = FALSE}
+
+### Choice of Model
+
+We wanted to see if mass as the explanatory variable alone is enough to predict whether a species is from a dense habitat or not, or if adding several other body measurements would create a better model. So then we created two models using logistic regression, as our outcome is binary (Dense habitat/Open habitat).
+
+```{r model building}
+mod_glm <- logistic_reg() %>%
+  set_engine("glm")
+```
+
+<br>
+
+### Compearing Two Models
+
+Splitting the data, we used 75% of the data set as our training data and then 25% as our test data. Furthermore, we used cross validation and split the data into ten folds to check the generalizebility of the model and avoid overfitting.
+
+```{r splitting the data}
 
 set.seed(222)
-BirdLife_split <- initial_split(BirdLife)
 
+BirdLife_split <- initial_split(BirdLife)
 train_data <- training(BirdLife_split)
 test_data <- testing(BirdLife_split)
 
 folds <- vfold_cv(train_data, v = 10)
   
+```
+
+We created a workflow, using only mass as the explanatory variable.
+
+```{r creating a workflow for model 1}
 rec_mass <- recipe(
   Habitat.Density ~ Mass,
   data = train_data
 ) %>%
   step_zv(all_predictors())
-
-mod_glm <- logistic_reg() %>%
-  set_engine("glm")
 
 wflow_mass <- workflow() %>%
   add_model(mod_glm) %>%
@@ -165,10 +261,14 @@ cv_mass <- fit_resamples(
   control = control_resamples(save_pred = TRUE)
 )
 
+```
 
+Then we created a second model using several other body measurements as explanatory variables, including: Mass, wing length, beak length, width, depth, wing length and tail length. Then we fittede the model.
+
+```{r creating a workflow for model 2}
 rec_multi <- recipe(
   Habitat.Density ~ Mass + Wing.Length + Beak.Length_Culmen + Beak.Length_Nares
-+ Beak.Width + Beak.Depth + Tarsus.Length + Wing.Length + Kipps.Distance + Tail.Length,
++ Beak.Width + Beak.Depth + Tarsus.Length + Wing.Length + Kipps.Distance + Tail.Length + Secondary1,
   data = train_data
 ) %>%
   step_zv(all_predictors())
@@ -185,8 +285,11 @@ cv_multi <- fit_resamples(
   resamples = folds,
   metrics = metric_set(roc_auc),
   control = control_resamples(save_pred = TRUE))
+```
 
+Then we compered the two models, based on area under the ROC curve.
 
+```{r compearing the two models, echo = FALSE}
 comperasion <- bind_rows(
   collect_metrics(cv_mass)  %>% mutate(model = "Mass only"),
   collect_metrics(cv_multi) %>% mutate(model = "All measurements")
@@ -201,47 +304,120 @@ comperison_table <- comperasion %>%
     Model = model
   )
 
-kable(comperison_table, digits = 3, format = "html")
-
+kable(comperison_table, digits = 3, format = "html") %>%
+   kable_styling(full_width = FALSE)
 
 ```
 
+Observe that using mass as the only explanatory variable gives 0.53 as the area under the ROC curve, meaning that its predictions are close to random. On the other hand, the second model, shows a area under the ROC curve being almost 0.70 indicating a better prediction accuracy.
+
+
+```{r Fitted model w multiple varibles, echo = FALSE}
+
+fit_table <- tidy(fit_multi) %>%
+  rename(
+    Term = term,
+    Estimate = estimate,
+    Std_Error = std.error,
+    Statistic = statistic
+  )
+kable(fit_table, digits = 3, format = "html") %>%
+   kable_styling(full_width = FALSE)
+
+
+```
+Looking further into the second model, we see that some explanatory variables, in particular Beak.Depth and Beak.Width seem to have a correlation with the type of habitat of a species. The positive coefficient in Beak.Depth tells us that there is a positive correlation, indicating that a larger value in Beak.Depth gives us a larger probability of the species being from a dense habitat. While the negative coefficient in Beak.Width tells us that there is a negative correlation, with a larger value decreasing the probability of the species being from a dense habitat.
+Looking at the extremely low p.values tells us that the observed difference is unlikely to be due to chance. Furthermore, overall the statistical errors seem low, suggesting that model is confident in that the coefficients are estimated with little variability.
+
+<br>
+
+## Model Evaluation
+
+Moving forward we chose to use the second model on our test data, and plotted the ROC curve to evaluate how well using physical body measurements could predict whether a species is from a Dense habitat.
+
+
+```{r ROC-curve, echo = FALSE}
+final_fit <- wflow_multi %>%
+  fit(data = test_data)
+
+tidy(final_fit)
+
+train_pred <- predict(final_fit, test_data, type = "prob") %>%
+  bind_cols(test_data)
+
+train_pred %>%
+  roc_curve(
+    truth = Habitat.Density,
+    .pred_Dense,
+    event_level = "first"
+  ) %>%
+  autoplot()
+```
+
+
+```{r Calculating area under curve, echo = FALSE, results = "hide"}
+train_pred %>%
+  roc_auc(
+    truth = Habitat.Density,
+    .pred_Dense,
+    event_level = "first"
+  )
+
+```
+The model achieved a AUC of almost 0.7, indicating that there is some correlation between physical traits in birds and their habitat preferences and that our model is moderately effective at predicting habitat density based on body measurements.
+
+```{r Evaluating model predictions}
+cutoff_prob <- 0.5
+
+train_pred %>%
+  mutate(                                      
+    Dense = if_else(Habitat.Density == "Dense", 
+                    "Dense Habitat", 
+                    "Open Habitat"),
+    Dense_pred = if_else(.pred_Dense > cutoff_prob, 
+                         "Habitat labeled Dense", 
+                         "Habitat labeled Open")) %>%
+  count(Dense, Dense_pred) %>%                  
+  pivot_wider(names_from = Dense, 
+              values_from = n) %>%
+  kable(col.names = c("", "Habitat is Dense", 
+                      "Habitat is Open"))
+```
+              
+Sensitivity = 571/(255+571) = 0.69
+<br>
+Specificity = 490/(323+490) = 0.60
+
+First, the sensitivity of the model tells us it does a moderately good job at identifying dense habitat species correctly (true positive), but still misses a noticeable amount (false negatives). Secondly, looking at the specificity we find that does a fair job at identifying open habitat species (true negatives).
+
+<br>
+<br>
+
+        
 ## Limitations
 
+One limitation of our project is that the trait values in the data set are based on species averages, even though the number of samples per species varies widely (from 1 to 784 individuals). This may cause some of the values to be skewed due to outliers and extreme values. Another limitation is that when we were doing the modeling we discovered that the number of  data for when habitat density is 1 is almost twice as much as that of 2 and 3. So in order to make a more even sample size, we combined habitat density 2 and 3 together and considered it as “Open” while 1 is considered "Dense", this may cause some problems as only half the data for open density habitats are actually for open density while the other half are technically considered semi-open.
 
+<br>
 
 ## Summary
 
+In conclusion, our results differed from the journal we compared against, which reported that birds in dense habitats tend to be lighter than those in open habitats. This difference may be due to the scope of the data: the journal focused on 55 species in central Spain, while we analysed all Passeriformes species available in the AVONET dataset, along with the limitations of our study. In our analysis, we found no clear relationship between body mass and habitat density. However, some other traits—especially beak depth and beak width—showed stronger associations with habitat type. Future work could explore these traits further to better understand how they relate to habitat use.
 
 
-# the instructions
 
-
-The write-up of your project and findings go here.
-
-Think of this as the text of your presentation with some extra detail to cover what there was not time to discuss in the presentation.
-This might include any assumptions you made when doing your analysis, any limitations of the work you have done or any ideas you have for future work.
-Feel free to split this section into subsections to make it easier to read.
-
-The length should be roughly 1,500 words.
-If you want to use a word count addin, you can install this by copying and pasting the following into RStudio:
-
-`devtools::install_github("benmarwick/wordcountaddin", type = "source", dependencies = TRUE)`
-
-You will then need to restart RStudio.
-Once you have done that, select the text you want to count the words of, go to Addins, and select the `Word count` addin.
-This addin counts words using two different algorithms, but the results should be similar and as long as you're in the ballpark of 1,500 words, you're good!
-The addin will ignore code chunks and only count the words in prose.
-If you don't want to use the addin you can always copy and paste the text into Microsoft Word to do a Word Count!
-
-You can also load your data here and present any analysis results / plots.
-Make sure to hide your code with `echo = FALSE` unless the point you are trying to make is about the code itself, in which case you should show your code.
 
 
 ## References
 
 Tobias, J. A., Sheard, C., Pigot, A. L., M. Devenish, A. J., Yang, J., Sayol, F., C. Neate-Clegg, M. H., Alioravainen, N., Weeks, T. L., Barber, R. A., Walkden, P. A., A. MacGregor, H. E., I. Jones, S. E., Vincent, C., Phillips, A. G., Marples, N. M., Montaño-Centellas, F. A., Leandro-Silva, V., Claramunt, S., . . . Schleuning, M. (2022). AVONET: Morphological, ecological and geographical data for all birds. _Ecology Letters_, _25_(3), 581-597. https://doi.org/10.1111/ele.13898
 
+Tobias, J. A., Sheard, C., Pigot, A. L., M. Devenish, A. J., Yang, J., Sayol, F., C. Neate-Clegg, M. H., Alioravainen, N., Weeks, T. L., Barber, R. A., Walkden, P. A., A. MacGregor, H. E., I. Jones, S. E., Vincent, C., Phillips, A. G., Marples, N. M., Montaño-Centellas, F. A., Leandro-Silva, V., Claramunt, S., . . . Schleuning, M. (2022) AVONET. (2022). ‘AVONET: morphological, ecological and geographical data for all birds’. Available at: <https://figshare.com/s/b990722d72a26b5bfead>. Accessed: 9 November 2025
+
 Polo, V., & Carrascal, L. M. (1999). Shaping the body mass distribution of Passeriformes: Habitat use and body mass are evolutionarily and ecologically related. Journal of Animal Ecology, 68(2), 324-337. https://besjournals.onlinelibrary.wiley.com/doi/10.1046/j.1365-2656.1999.00282.x 
 
-Open AI
+Citation: 
+AVONET. (2022). ‘AVONET: morphological, ecological and geographical data for all birds’. Available at: <https://figshare.com/s/b990722d72a26b5bfead>. Accessed: 9 November 2025
+
+
+We used ChatGPT (v5) to help with debugging of the code, as well as improving clarity of our writing.
